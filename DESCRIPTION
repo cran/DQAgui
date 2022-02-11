@@ -1,0 +1,33 @@
+Package: DQAgui
+Title: Graphical User Interface for Data Quality Assessment
+Version: 0.1.7
+Authors@R: c(
+    person("Lorenz A.", "Kapsner", , "lorenz.kapsner@uk-erlangen.de", role = c("cre", "aut"),
+           comment = c(ORCID = "0000-0003-1866-860X")),
+    person("Jonathan M.", "Mang", role = "aut",
+           comment = c(ORCID = "0000-0003-0518-4710")),
+    person("MIRACUM - Medical Informatics in Research and Care in University Medicine", role = "fnd"),
+    person("Universitätsklinikum Erlangen", role = "cph")
+  )
+Description: A graphical user interface (GUI) to the functions implemented in the R package 'DQAstats'.
+License: GPL-3
+URL: https://github.com/miracum/dqa-dqagui
+BugReports: https://github.com/miracum/dqa-dqagui/issues
+Encoding: UTF-8
+Date: 2022-02-10
+Imports: data.table, daterangepicker, DIZutils (>= 0.0.12), DQAstats
+        (>= 0.2.3), DT, jsonlite, knitr, lubridate, magrittr,
+        parsedate, shiny, shinyalert, shinydashboard, shinyFiles,
+        shinyjs, shinyWidgets, waiter
+Suggests: lintr, processx, testthat
+RoxygenNote: 7.1.2
+NeedsCompilation: no
+Packaged: 2022-02-10 10:52:36 UTC; user
+Author: Lorenz A. Kapsner [cre, aut] (<https://orcid.org/0000-0003-1866-860X>),
+  Jonathan M. Mang [aut] (<https://orcid.org/0000-0003-0518-4710>),
+  MIRACUM - Medical Informatics in Research and Care in University
+    Medicine [fnd],
+  Universitätsklinikum Erlangen [cph]
+Maintainer: Lorenz A. Kapsner <lorenz.kapsner@uk-erlangen.de>
+Repository: CRAN
+Date/Publication: 2022-02-11 08:30:06 UTC
