@@ -5,8 +5,8 @@
 [![linting](https://github.com/miracum/dqa-dqagui/workflows/lint/badge.svg?branch=master)](https://github.com/miracum/dqa-dqagui/actions)
 [![test-coverage](https://github.com/miracum/dqa-dqagui/workflows/test-coverage/badge.svg?branch=master)](https://github.com/miracum/dqa-dqagui/actions)
 [![codecov](https://codecov.io/gh/miracum/dqa-dqagui/branch/master/graph/badge.svg)](https://app.codecov.io/gh/miracum/dqa-dqagui)
-[![pipeline status](https://gitlab.miracum.org/miracum/dqa/dqagui/badges/master/pipeline.svg)](https://gitlab.miracum.org/miracum/dqa/dqagui/-/commits/master)
-[![coverage report](https://gitlab.miracum.org/miracum/dqa/dqagui/badges/master/coverage.svg)](https://gitlab.miracum.org/miracum/dqa/dqagui/-/commits/master)
+<!--[![pipeline status](https://gitlab.miracum.org/miracum/dqa/dqagui/badges/master/pipeline.svg)](https://gitlab.miracum.org/miracum/dqa/dqagui/-/commits/master)
+[![coverage report](https://gitlab.miracum.org/miracum/dqa/dqagui/badges/master/coverage.svg)](https://gitlab.miracum.org/miracum/dqa/dqagui/-/commits/master)-->
 [![CRAN Status Badge](https://www.r-pkg.org/badges/version-ago/DQAgui)](https://cran.r-project.org/package=DQAgui)
 [![CRAN Checks](https://cranchecks.info/badges/worst/DQAgui)](https://cran.r-project.org/web/checks/check_results_DQAgui.html)
 <!-- badges: end -->
@@ -27,7 +27,7 @@ remotes::install_github("miracum/dqa-dqagui")
 
 The database connection can be configured using environment variables. These can be set using the base R command `Sys.setenv()`.
 
-A detailed description, which environment variables need to be set for the specific databases can be found [here](https://github.com/miracum/misc-dizutils/blob/master/README.md).
+A detailed description, which environment variables need to be set for the specific databases can be found [here](https://github.com/miracum/misc-dizutils#db_connection).
 
 ## Example
 

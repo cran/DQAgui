@@ -1,6 +1,6 @@
 Package: DQAgui
 Title: Graphical User Interface for Data Quality Assessment
-Version: 0.1.8
+Version: 0.1.9
 Authors@R: c(
     person("Lorenz A.", "Kapsner", , "lorenz.kapsner@uk-erlangen.de", role = c("cre", "aut"),
            comment = c(ORCID = "0000-0003-1866-860X")),
@@ -22,7 +22,7 @@ Imports: data.table, daterangepicker, DIZtools, DIZutils (>= 0.0.12),
 Suggests: lintr, processx, testthat
 RoxygenNote: 7.1.2
 NeedsCompilation: no
-Packaged: 2022-02-21 08:46:44 UTC; user
+Packaged: 2022-02-21 10:38:41 UTC; user
 Author: Lorenz A. Kapsner [cre, aut] (<https://orcid.org/0000-0003-1866-860X>),
   Jonathan M. Mang [aut] (<https://orcid.org/0000-0003-0518-4710>),
   MIRACUM - Medical Informatics in Research and Care in University
@@ -30,4 +30,4 @@ Author: Lorenz A. Kapsner [cre, aut] (<https://orcid.org/0000-0003-1866-860X>),
   Universitätsklinikum Erlangen [cph]
 Maintainer: Lorenz A. Kapsner <lorenz.kapsner@uk-erlangen.de>
 Repository: CRAN
-Date/Publication: 2022-02-21 09:00:34 UTC
+Date/Publication: 2022-02-21 13:30:19 UTC

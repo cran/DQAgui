@@ -31,10 +31,7 @@ shiny::shinyServer(function(input, output, session) {
     shiny::observe({
         if (is.null(rv$finished_onstart)) {
             # Clean old connections (e.g. after reloading the app):
-            DIZtools::close_all_connections(
-                logfile_dir = rv$log$logfile_dir,
-                headless = rv$headless
-            )
+            DIZtools::close_all_connections()
 
             # Create new logfile:
             DIZtools::cleanup_old_logfile(logfile_dir = rv$log$logfile_dir)
@@ -65,9 +62,7 @@ shiny::shinyServer(function(input, output, session) {
                     # if existing, set email address for data-map button
                     out <- DIZtools::get_config(
                         config_file = paste0(utils_path, "/MISC/email.yml"),
-                        config_key = "email",
-                        logfile_dir = rv$log$logfile_dir,
-                        headless = rv$headless
+                        config_key = "email"
                     )
                 },
                 error = function(e) {
@@ -108,8 +103,7 @@ shiny::shinyServer(function(input, output, session) {
             logfile_dir = rv$log$logfile_dir,
             headless = rv$headless
         )
-        DIZtools::close_all_connections(logfile_dir = rv$log$logfile_dir,
-                                        headless = rv$headless)
+        DIZtools::close_all_connections()
         invisible(gc())
         session$reload()
     })
