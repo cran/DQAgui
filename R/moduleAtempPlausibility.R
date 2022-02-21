@@ -182,7 +182,7 @@ module_atemp_pl_server <- function(input, output, session, rv, input_re) {
             )
           }, error = function(e) {
             shinyjs::logjs(e)
-            DIZutils::feedback(
+            DIZtools::feedback(
               print_this = paste0(
                 "Error while rendering the source counts while",
                 " determining the atemporal plausibilities."

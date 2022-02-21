@@ -35,7 +35,7 @@
 #'
 #' @export
 button_send_datamap <- function(rv) {
-  DIZutils::feedback(
+  DIZtools::feedback(
     print_this = "Sending the datamap",
     logfile_dir = rv$log$logfile_dir,
     headless = rv$headless
@@ -103,7 +103,7 @@ button_mdr <-
            mdr_filename,
            logfile_dir,
            headless) {
-    DIZutils::feedback(print_this = "Loading the metadata repository",
+    DIZtools::feedback(print_this = "Loading the metadata repository",
                        logfile_dir = logfile_dir,
                        headless = headless)
     shiny::withProgress(message = "Loading MDR", value = 0, {

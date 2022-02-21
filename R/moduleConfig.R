@@ -88,7 +88,7 @@ module_config_server <-
       handlerExpr = {
         rv$csv_dir_src_clicked <- FALSE
         rv$csv_dir_src <- as.character(
-          DIZutils::clean_path_name(
+          DIZtools::clean_path_name(
             shinyFiles::parseDirPath(
               roots = roots,
               selection = input$config_sourcedir_in
@@ -101,7 +101,7 @@ module_config_server <-
             rv$source$settings$path != "") {
           # workaround to tell ui, that it is there
           output$source_csv_dir <- reactive({
-            DIZutils::feedback(
+            DIZtools::feedback(
               paste0("Source file dir: ",
                      rv$source$settings$path),
               findme = "ad440c9fcb",
@@ -118,7 +118,7 @@ module_config_server <-
           ## Fixes #42 (GitLab):
           env_var_name <-
             paste0(toupper(rv$source$system_name), "_PATH")
-          DIZutils::feedback(
+          DIZtools::feedback(
             print_this = paste0(
               "CSV path '",
               rv$source$settings$path,
@@ -137,10 +137,10 @@ module_config_server <-
           ## Sys.setenv(env_var_name = rv$source$settings$path) leads to
           ## `env_var_name = "path"` be created and not
           ## `example_name = "path"`):
-          DIZutils::setenv2(key = env_var_name, val = rv$source$settings$path)
+          DIZtools::setenv2(key = env_var_name, val = rv$source$settings$path)
           rm(env_var_name)
 
-          DIZutils::feedback(
+          DIZtools::feedback(
             paste0("rv$source$system_type = ",
                    rv$source$system_type),
             findme = "91ebdd5a1d")
@@ -159,7 +159,7 @@ module_config_server <-
       handlerExpr = {
         rv$csv_dir_tar_clicked <- FALSE
         rv$csv_dir_tar <- as.character(
-          DIZutils::clean_path_name(
+          DIZtools::clean_path_name(
             shinyFiles::parseDirPath(
               roots = roots,
               selection = input$config_targetdir_in
@@ -171,7 +171,7 @@ module_config_server <-
             rv$target$settings$path != "") {
           # workaround to tell ui, that it is there
           output$target_csv_dir <- reactive({
-            DIZutils::feedback(
+            DIZtools::feedback(
               paste0("Target file dir: ",
                      rv$target$settings$path),
               findme = "6f18c181e5",
@@ -188,7 +188,7 @@ module_config_server <-
           ## Fixes #42 (GitLab):
           env_var_name <-
             paste0(toupper(rv$target$system_name), "_PATH")
-          DIZutils::feedback(
+          DIZtools::feedback(
             print_this = paste0(
               "CSV path '",
               rv$target$settings$path,
@@ -207,10 +207,10 @@ module_config_server <-
           ## Sys.setenv(env_var_name = rv$target$settings$path) leads to
           ## `env_var_name = "path"` be created and not
           ## `example_name = "path"`):
-          DIZutils::setenv2(key = env_var_name, val = rv$target$settings$path)
+          DIZtools::setenv2(key = env_var_name, val = rv$target$settings$path)
           rm(env_var_name)
 
-          DIZutils::feedback(
+          DIZtools::feedback(
             paste0("rv$target$system_type = ",
                    rv$target$system_type),
             findme = "4690c52739")
@@ -228,20 +228,20 @@ module_config_server <-
       eventExpr = input_re()[["moduleConfig-config_load_mdr"]],
       handlerExpr = {
         if (is.null(rv$mdr)) {
-          DIZutils::feedback(
+          DIZtools::feedback(
             print_this = "Reading MDR ...",
             findme = "f877fee7d2",
             logfile_dir = rv$log$logfile_dir,
             headless = rv$headless
           )
-          DIZutils::feedback(
+          DIZtools::feedback(
             print_this = paste0("MDR-Filename:",
                                 rv$mdr_filename),
             findme = "582d6a39c6",
             logfile_dir = rv$log$logfile_dir,
             headless = rv$headless
           )
-          DIZutils::feedback(
+          DIZtools::feedback(
             print_this = paste0("rv$utilspath:",
                                 rv$utilspath),
             findme = "b5c71849f9",
@@ -264,7 +264,7 @@ module_config_server <-
               "source_system_type")
           rv$systems <- unique(rv$mdr[, vec, with = FALSE])
           rv$systems <- rv$systems[!is.na(get("source_system_name"))]
-          DIZutils::feedback(
+          DIZtools::feedback(
             print_this = paste0(
               "Different systems found in the MDR: ",
               paste(unique(rv$systems[["source_system_name"]]),
@@ -313,7 +313,7 @@ module_config_server <-
             rv$systems[!is.na(get("source_system_type")),
                        unique(get("source_system_type"))]
 
-          DIZutils::feedback(
+          DIZtools::feedback(
             print_this = rv$system_types,
             prefix = "System types:  ",
             findme = "9aec84fcca",
@@ -322,7 +322,7 @@ module_config_server <-
           )
           if (!("csv" %in% tolower(rv$system_types))) {
             # Remove CSV-Tabs:
-            DIZutils::feedback(
+            DIZtools::feedback(
               "Removing csv-tab from source ...",
               findme = "3c2f368001",
               logfile_dir = rv$log$logfile_dir,
@@ -331,7 +331,7 @@ module_config_server <-
             shiny::removeTab(inputId = "source_tabs",
                              target = system_types_mapping[["csv"]])
 
-            DIZutils::feedback(
+            DIZtools::feedback(
               "Removing csv-tab from target ...",
               findme = "337b20a126",
               logfile_dir = rv$log$logfile_dir,
@@ -344,7 +344,7 @@ module_config_server <-
               rv$systems[get("source_system_type") == "csv" &
                            !is.na(get("source_system_name")),
                          unique(get("source_system_name"))]
-            DIZutils::feedback(
+            DIZtools::feedback(
               csv_system_names,
               prefix = "csv_system_names: ",
               findme = "5a083a3d53",
@@ -369,7 +369,7 @@ module_config_server <-
           }
           if (!("postgres" %in% tolower(rv$system_types))) {
             # Remove Postgres-Tabs:
-            DIZutils::feedback(
+            DIZtools::feedback(
               "Removing postgres-tab from source ...",
               logfile_dir = rv$log$logfile_dir,
               headless = rv$headless
@@ -377,7 +377,7 @@ module_config_server <-
             shiny::removeTab(inputId = "source_tabs",
                              target = system_types_mapping[["postgres"]])
 
-            DIZutils::feedback(
+            DIZtools::feedback(
               "Removing postgres-tab from target ...",
               logfile_dir = rv$log$logfile_dir,
               headless = rv$headless
@@ -395,7 +395,7 @@ module_config_server <-
               rv$systems[get("source_system_type") == "postgres" &
                            !is.na(get("source_system_name")),
                          unique(get("source_system_name"))]
-            DIZutils::feedback(
+            DIZtools::feedback(
               postgres_system_names,
               prefix = "postgres_system_names: ",
               findme = "be136f5ab6",
@@ -420,7 +420,7 @@ module_config_server <-
           }
           if (!("oracle" %in% tolower(rv$system_types))) {
             # Remove Oracle-Tabs:
-            DIZutils::feedback(
+            DIZtools::feedback(
               "Removing oracle-tab from source ...",
               logfile_dir = rv$log$logfile_dir,
               headless = rv$headless,
@@ -429,7 +429,7 @@ module_config_server <-
             shiny::removeTab(inputId = "source_tabs",
                              target = system_types_mapping[["oracle"]])
 
-            DIZutils::feedback(
+            DIZtools::feedback(
               "Removing oracle-tab from target ...",
               logfile_dir = rv$log$logfile_dir,
               headless = rv$headless,
@@ -448,7 +448,7 @@ module_config_server <-
               rv$systems[get("source_system_type") == "oracle" &
                            !is.na(get("source_system_name")),
                          unique(get("source_system_name"))]
-            DIZutils::feedback(
+            DIZtools::feedback(
               oracle_system_names,
               prefix = "oracle_system_names: ",
               findme = "bea2cd91a1",
@@ -473,7 +473,7 @@ module_config_server <-
           }
 
           first_system <- tolower(rv$system_types)[[1]]
-          DIZutils::feedback(
+          DIZtools::feedback(
             print_this = paste0("Setting tab '",
                                 first_system,
                                 "' as active tab for source",
@@ -528,7 +528,7 @@ module_config_server <-
     # If the "load presets"-button was pressed, startload & show the presets:
     # observeEvent(input$source_pg_presettings_btn, {
     observeEvent(input$source_postgres_presettings_list, {
-      DIZutils::feedback(
+      DIZtools::feedback(
         print_this =
           paste0(
             "Input-preset '",
@@ -548,7 +548,7 @@ module_config_server <-
           settings = rv$settings
         )
 
-      DIZutils::feedback(
+      DIZtools::feedback(
         print_this = paste(
           "Loaded successfully.",
           "Filling presets to global rv-object and UI ..."
@@ -600,7 +600,7 @@ module_config_server <-
     })
 
     observeEvent(input$source_oracle_presettings_list, {
-      DIZutils::feedback(
+      DIZtools::feedback(
         print_this =
           paste0(
             "Input-preset ",
@@ -618,7 +618,7 @@ module_config_server <-
           settings = rv$settings
         )
 
-      DIZutils::feedback(
+      DIZtools::feedback(
         print_this = paste(
           "Loaded successfully.",
           "Filling presets to global rv-object and UI ..."
@@ -678,7 +678,7 @@ module_config_server <-
 
     #observeEvent(input$target_pg_presettings_btn, {
     observeEvent(input$target_postgres_presettings_list, {
-      DIZutils::feedback(
+      DIZtools::feedback(
         paste0(
           "Input-preset ",
           input$target_postgres_presettings_list,
@@ -696,7 +696,7 @@ module_config_server <-
           settings = rv$settings
         )
 
-      DIZutils::feedback(
+      DIZtools::feedback(
         paste(
           "Loaded successfully.",
           "Filling presets to global rv-object and UI ..."
@@ -748,7 +748,7 @@ module_config_server <-
     })
 
     observeEvent(input$target_oracle_presettings_list, {
-      DIZutils::feedback(
+      DIZtools::feedback(
         paste0(
           "Input-preset ",
           input$target_oracle_presettings_list,
@@ -766,7 +766,7 @@ module_config_server <-
           settings = rv$settings
         )
 
-      DIZutils::feedback(
+      DIZtools::feedback(
         paste(
           "Loaded successfully.",
           "Filling presets to global rv-object and UI ..."
@@ -886,7 +886,7 @@ module_config_server <-
             feedback_txt(system = "The source system", type = "target")
           })
         # Feedback to the console:
-        DIZutils::feedback(
+        DIZtools::feedback(
           "Target == source now.",
           findme = "94d3a2090c",
           logfile_dir = rv$log$logfile_dir,
@@ -902,7 +902,7 @@ module_config_server <-
         showTab(inputId = "target_tabs", target = "PostgreSQL")
         showTab(inputId = "target_tabs", target = "Oracle")
         # Feedback to the console:
-        DIZutils::feedback(
+        DIZtools::feedback(
           "Target != source now.",
           findme = "ec51b122ee",
           logfile_dir = rv$log$logfile_dir,
@@ -947,7 +947,7 @@ module_config_server <-
         ## For runtime calculation:
         start_time <- Sys.time()
 
-        DIZutils::feedback(
+        DIZtools::feedback(
           paste0(
             "Restricting date slider state: ",
             input$date_restriction_slider
@@ -969,7 +969,7 @@ module_config_server <-
         # check, if mdr is present. without mdr, we cannot perform any
         # further operations
         if (is.null(rv$mdr)) {
-          DIZutils::feedback(
+          DIZtools::feedback(
             "No MDR found. Please provide a metadata repository (MDR).",
             type = "Warning",
             findme = "1dc68937b8",
@@ -1001,7 +1001,7 @@ module_config_server <-
           # Check if at least one data element was selected for analyzation:
           if (length(input_re()[[paste0("moduleConfig-select_dqa_assessment",
                                         "_variables")]]) <= 0) {
-            DIZutils::feedback(
+            DIZtools::feedback(
               print_this = paste0(
                 "You didn't specify a data element to",
                 " analyze. Please select at least one data element",
@@ -1018,26 +1018,26 @@ module_config_server <-
           # If target should be identical to source, set it here again:
           if (isTRUE(rv$target_is_source)) {
             rv <- set_target_equal_to_source(rv)
-            DIZutils::feedback(print_this = "Source == Target",
+            DIZtools::feedback(print_this = "Source == Target",
                                findme = "c14c17bf15",
                                logfile_dir = rv$log$logfile_dir,
                                headless = rv$headless
             )
           } else {
-            DIZutils::feedback(print_this = "Source != Target",
+            DIZtools::feedback(print_this = "Source != Target",
                                findme = "54fe9a5717",
                                logfile_dir = rv$log$logfile_dir,
                                headless = rv$headless
             )
           }
 
-          DIZutils::feedback(
+          DIZtools::feedback(
             paste0("Source system is ", rv$source$system_name),
             findme = "1d61685355",
             logfile_dir = rv$log$logfile_dir,
             headless = rv$headless
           )
-          DIZutils::feedback(
+          DIZtools::feedback(
             paste0("Target system is ", rv$target$system_name),
             findme = "eaf72ed747",
             logfile_dir = rv$log$logfile_dir,
@@ -1075,7 +1075,7 @@ module_config_server <-
           )
         }
       }, error = function(cond) {
-        DIZutils::feedback(
+        DIZtools::feedback(
           print_this = paste0(cond),
           findme = "05c96798f8",
           type = "Error",
@@ -1118,7 +1118,7 @@ module_config_server <-
     shiny::observeEvent(eventExpr = input$date_restriction_slider,
                         handlerExpr = {
                           if (isTRUE(input$date_restriction_slider)) {
-                            DIZutils::feedback(
+                            DIZtools::feedback(
                               print_this = "Date restriction will be applied",
                               findme = "4736de090c",
                               logfile_dir = rv$log$logfile_dir
@@ -1131,7 +1131,7 @@ module_config_server <-
                             rv$restricting_date$end <-
                               as.Date(input$datetime_picker[[2]])
                           } else {
-                            DIZutils::feedback(
+                            DIZtools::feedback(
                               print_this = paste0("Date restriction will",
                                                   " NOT be applied"),
                               findme = "508c7f34f9",
@@ -1170,7 +1170,7 @@ module_config_server <-
                                 input$datetime_picker[[2]]
                               )
                             })
-                          DIZutils::feedback(
+                          DIZtools::feedback(
                             print_this = paste0(
                               "Using ",
                               rv$restricting_date$start,

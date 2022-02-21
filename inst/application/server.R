@@ -21,8 +21,8 @@ shiny::shinyServer(function(input, output, session) {
     rv <- shiny::reactiveValues(
         headless = FALSE,
         mdr_filename = mdr_filename,
-        log = list(logfile_dir = DIZutils::clean_path_name(logfile_dir)),
-        utilspath = DIZutils::clean_path_name(utils_path),
+        log = list(logfile_dir = DIZtools::clean_path_name(logfile_dir)),
+        utilspath = DIZtools::clean_path_name(utils_path),
         current_date = format(Sys.Date(), "%d. %B %Y", tz = "CET"),
         parallel = parallel,
         ncores = ncores
@@ -31,28 +31,28 @@ shiny::shinyServer(function(input, output, session) {
     shiny::observe({
         if (is.null(rv$finished_onstart)) {
             # Clean old connections (e.g. after reloading the app):
-            DIZutils::close_all_connections(
+            DIZtools::close_all_connections(
                 logfile_dir = rv$log$logfile_dir,
                 headless = rv$headless
             )
 
             # Create new logfile:
-            DIZutils::cleanup_old_logfile(logfile_dir = rv$log$logfile_dir)
+            DIZtools::cleanup_old_logfile(logfile_dir = rv$log$logfile_dir)
 
             # feedback directories
-            DIZutils::feedback(
+            DIZtools::feedback(
                 print_this = paste0("Logfile dir: ",
                                     rv$log$logfile_dir),
                 logfile_dir = rv$log$logfile_dir,
                 headless = rv$headless
             )
-            DIZutils::feedback(
+            DIZtools::feedback(
                 print_this = paste0("Utils path: ",
                                     rv$utilspath),
                 logfile_dir = rv$log$logfile_dir,
                 headless = rv$headless
             )
-            DIZutils::feedback(
+            DIZtools::feedback(
                 print_this = paste0("MDR filename: ",
                                     rv$mdr_filename),
                 logfile_dir = rv$log$logfile_dir,
@@ -63,7 +63,7 @@ shiny::shinyServer(function(input, output, session) {
             rv$datamap_email <- tryCatch(
                 expr = {
                     # if existing, set email address for data-map button
-                    out <- DIZutils::get_config(
+                    out <- DIZtools::get_config(
                         config_file = paste0(utils_path, "/MISC/email.yml"),
                         config_key = "email",
                         logfile_dir = rv$log$logfile_dir,
@@ -92,23 +92,23 @@ shiny::shinyServer(function(input, output, session) {
 
     # handle reset
     shiny::observeEvent(input$reset, {
-        DIZutils::feedback(
+        DIZtools::feedback(
             print_this = "\U2304",
             logfile_dir = rv$log$logfile_dir,
             headless = rv$headless
         )
-        DIZutils::feedback(
+        DIZtools::feedback(
             print_this = "############ APP WAS RESETTED ############",
             findme = "9c57ce125a",
             logfile_dir = rv$log$logfile_dir,
             headless = rv$headless
         )
-        DIZutils::feedback(
+        DIZtools::feedback(
             print_this = "\U2303",
             logfile_dir = rv$log$logfile_dir,
             headless = rv$headless
         )
-        DIZutils::close_all_connections(logfile_dir = rv$log$logfile_dir,
+        DIZtools::close_all_connections(logfile_dir = rv$log$logfile_dir,
                                         headless = rv$headless)
         invisible(gc())
         session$reload()

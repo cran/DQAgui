@@ -84,7 +84,7 @@ feedback_txt <- function(system, type) {
     "\U2714 ",
     tags$b(system),
     " will be used as ",
-    DIZutils::firstup(type),
+    DIZtools::firstup(type),
     " system.",
     "\n\n",
     "To change, simply select and save another one."
@@ -123,7 +123,7 @@ validate_inputs <- function(rv, input, output, session) {
           if (typeof(rv[[source_target]]$settings$path) == "character" &&
               !is.null(rv[[source_target]]$settings$path) &&
               length(rv[[source_target]]$settings$path) > 0) {
-            DIZutils::feedback(
+            DIZtools::feedback(
               print_this = paste0(source_target, " settings seem valid."),
               findme = "c0bcc9aa31",
               logfile_dir = rv$log$logfile_dir,
@@ -138,7 +138,7 @@ validate_inputs <- function(rv, input, output, session) {
               headless = rv$headless
             )
             if (isTRUE(test_csv_tmp)) {
-              DIZutils::feedback(
+              DIZtools::feedback(
                 print_this = paste0("All ",
                                     source_target,
                                     " csv-files were found."),
@@ -147,7 +147,7 @@ validate_inputs <- function(rv, input, output, session) {
                 headless = rv$headless
               )
             } else{
-              DIZutils::feedback(
+              DIZtools::feedback(
                 print_this = paste0("Some ",
                                     source_target,
                                     " csv-files are MISSING."),
@@ -160,7 +160,7 @@ validate_inputs <- function(rv, input, output, session) {
             }
           } else {
             # invalid path:
-            DIZutils::feedback(
+            DIZtools::feedback(
               print_this = paste0(source_target, " settings not valid."),
               type = "warning",
               findme = "10d5e79d44",
@@ -168,7 +168,7 @@ validate_inputs <- function(rv, input, output, session) {
               logfile_dir = rv$log$logfile_dir,
               headless = rv$headless
             )
-            DIZutils::feedback(
+            DIZtools::feedback(
               print_this = paste0(
                 "rv$",
                 source_target,
@@ -201,7 +201,7 @@ validate_inputs <- function(rv, input, output, session) {
           )
         } else {
           ## This system name is not known/implemented here:
-          DIZutils::feedback(
+          DIZtools::feedback(
             print_this = paste0(
               source_target,
               " system ",
@@ -219,7 +219,7 @@ validate_inputs <- function(rv, input, output, session) {
       }
     }
   } else {
-    DIZutils::feedback(
+    DIZtools::feedback(
       print_this = "Either source or target system is not set.",
       type = "Warning",
       findme = "4e9400f8c9",
@@ -325,7 +325,7 @@ check_load_data_button <- function(rv, session) {
 
     if (time_filtering_possible) {
       ## Time filtering is possible, so enable the elements in the GUI:
-      DIZutils::feedback(
+      DIZtools::feedback(
         print_this = paste0(
           "Date restriction is possible.",
           " Showing date-picking elements in the GUI now."
@@ -347,7 +347,7 @@ check_load_data_button <- function(rv, session) {
 
     } else {
       ## Time filtering is NOT possible, so disable the elements in the GUI:
-      DIZutils::feedback(
+      DIZtools::feedback(
         print_this = paste0(
           "Date restriction is NOT possible or needed.",
           " Hiding date-picking elements in the GUI now."
@@ -407,7 +407,7 @@ test_connection_button_clicked <-
            output,
            session) {
     error <- TRUE
-    DIZutils::feedback(
+    DIZtools::feedback(
       print_this = paste0(
         "Trying to connect to ",
         db_type,
@@ -468,7 +468,7 @@ test_connection_button_clicked <-
 
 
       if (!is.null(rv[[source_target]]$db_con)) {
-        DIZutils::feedback(
+        DIZtools::feedback(
           paste0(
             "Connection to ",
             input_system,
@@ -560,7 +560,7 @@ print_runtime <-
     } else {
       text <- paste0("Execution of ", name, " took ")
     }
-    DIZutils::feedback(
+    DIZtools::feedback(
       print_this = paste0(
         text,
         format(Sys.time() - start_time),
@@ -659,7 +659,7 @@ get_settings_from_displayname <-
         } else {
           name_to_check <- settings[[i]]$displayname
         }
-        if (DIZutils::equals2(name_to_check, displayname)) {
+        if (DIZtools::equals2(name_to_check, displayname)) {
           return(settings[[i]])
         } else {
           return(NA)
@@ -674,7 +674,7 @@ get_settings_from_displayname <-
       }) == FALSE]
 
     if (length(res) > 1) {
-      DIZutils::feedback(
+      DIZtools::feedback(
         print_this = paste0(
           "Found more than one setting-list while searching for '",
           displayname,

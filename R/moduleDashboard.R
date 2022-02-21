@@ -71,7 +71,7 @@ module_dashboard_server <-
 
             ## Save restricting date information to rv object:
             if (isFALSE(rv$restricting_date$use_it)) {
-              DIZutils::feedback(
+              DIZtools::feedback(
                 print_this = paste0(
                   "No time contstraints will be applied to input data.",
                   " Either `restricting_date_start` or ",
@@ -99,7 +99,7 @@ module_dashboard_server <-
 
               ## Check the start date:
               if (is.na(restricting_date_start_posixct)) {
-                DIZutils::feedback(
+                DIZtools::feedback(
                   print_this = paste0("Couldn't identify input date",
                                       " format for `restricting_date_start`."),
                   logfile = rv$log$logfile_dir,
@@ -111,7 +111,7 @@ module_dashboard_server <-
 
               ## Check the end date:
               if (is.na(restricting_date_end_posixct)) {
-                DIZutils::feedback(
+                DIZtools::feedback(
                   print_this = paste0(
                     "Couldn't identify input date format for ",
                     " `restricting_date_end`.",
@@ -128,7 +128,7 @@ module_dashboard_server <-
               ## Check if start < end:
               if (restricting_date_end_posixct <=
                   restricting_date_start_posixct) {
-                DIZutils::feedback(
+                DIZtools::feedback(
                   print_this = paste0(
                     "`restricting_date_start` needs to be a timestamp",
                     " before `restricting_date_end`.",
@@ -151,7 +151,7 @@ module_dashboard_server <-
                 restricting_date_start_posixct
               rv$restricting_date$end <- restricting_date_end_posixct
 
-              DIZutils::feedback(
+              DIZtools::feedback(
                 print_this = paste0(
                   "Time contstraints from ",
                   rv$restricting_date$start,
@@ -175,7 +175,7 @@ module_dashboard_server <-
                 enable_stop = FALSE
               )
             } else {
-              DIZutils::feedback(
+              DIZtools::feedback(
                 print_this = paste0(
                   "Don't checking the time filtering columns because",
                   " time filtering is not necessarry.",
@@ -236,7 +236,7 @@ module_dashboard_server <-
 
             ## load target_data
             if (isTRUE(rv$target_is_source)) {
-              DIZutils::feedback(
+              DIZtools::feedback(
                 print_this = paste0(
                   "Source and Target settings are identical.",
                   " Using source data also as target data."
@@ -248,7 +248,7 @@ module_dashboard_server <-
               rv <- set_target_equal_to_source(rv)
               rv$data_target <- rv$data_source
             } else {
-              DIZutils::feedback(
+              DIZtools::feedback(
                 print_this = paste0(
                   "Source and Target settings are NOT identical.",
                   " Loading the target dataset now."
@@ -400,7 +400,7 @@ module_dashboard_server <-
             )
 
             if (!is.null(rv$datamap)) {
-              DIZutils::feedback(print_this = paste0(
+              DIZtools::feedback(print_this = paste0(
                 "Datamap:", rv$datamap),
                 findme = "43404a3f38")
             }
@@ -418,7 +418,7 @@ module_dashboard_server <-
             rv$create_report <- TRUE
           }
         }, error = function(cond) {
-          DIZutils::feedback(
+          DIZtools::feedback(
             print_this = paste0(cond),
             findme = "32b84ec323",
             type = "Error",

@@ -56,23 +56,23 @@ launch_app <- function(port = 3838,
                        parallel = TRUE,
                        ncores = 2) {
 
-  DIZutils::global_env_hack(key = "utils_path",
+  DIZtools::assign_to_R_env(key = "utils_path",
                             val = utils_path,
                             pos = 1L)
 
-  DIZutils::global_env_hack(key = "mdr_filename",
+  DIZtools::assign_to_R_env(key = "mdr_filename",
                             val = mdr_filename,
                             pos = 1L)
 
-  DIZutils::global_env_hack(key = "logfile_dir",
+  DIZtools::assign_to_R_env(key = "logfile_dir",
                             val = logfile_dir,
                             pos = 1L)
 
-  DIZutils::global_env_hack(key = "parallel",
+  DIZtools::assign_to_R_env(key = "parallel",
                             val = parallel,
                             pos = 1L)
 
-  DIZutils::global_env_hack(key = "ncores",
+  DIZtools::assign_to_R_env(key = "ncores",
                             val = ncores,
                             pos = 1L)
 
