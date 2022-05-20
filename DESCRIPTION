@@ -1,6 +1,6 @@
 Package: DQAgui
 Title: Graphical User Interface for Data Quality Assessment
-Version: 0.1.9
+Version: 0.2.0
 Authors@R: c(
     person("Lorenz A.", "Kapsner", , "lorenz.kapsner@uk-erlangen.de", role = c("cre", "aut"),
            comment = c(ORCID = "0000-0003-1866-860X")),
@@ -14,15 +14,15 @@ License: GPL-3
 URL: https://github.com/miracum/dqa-dqagui
 BugReports: https://github.com/miracum/dqa-dqagui/issues
 Encoding: UTF-8
-Date: 2022-02-21
-Imports: data.table, daterangepicker, DIZtools, DIZutils (>= 0.0.12),
-        DQAstats (>= 0.2.3), DT, jsonlite, knitr, lubridate, magrittr,
-        parsedate, shiny, shinyalert, shinydashboard, shinyFiles,
-        shinyjs, shinyWidgets, waiter
-Suggests: lintr, processx, testthat
+Date: 2022-05-20
+Imports: data.table, daterangepicker, DIZtools (>= 0.0.5), DIZutils (>=
+        0.1.0), DQAstats (>= 0.3.0), DT, jsonlite, knitr, lubridate,
+        magrittr, parsedate, shiny, shinyalert, shinydashboard,
+        shinyFiles, shinyjs, shinyWidgets, waiter
+Suggests: lintr, testthat (>= 3.0.0)
 RoxygenNote: 7.1.2
 NeedsCompilation: no
-Packaged: 2022-02-21 10:38:41 UTC; user
+Packaged: 2022-05-20 09:24:52 UTC; user
 Author: Lorenz A. Kapsner [cre, aut] (<https://orcid.org/0000-0003-1866-860X>),
   Jonathan M. Mang [aut] (<https://orcid.org/0000-0003-0518-4710>),
   MIRACUM - Medical Informatics in Research and Care in University
@@ -30,4 +30,4 @@ Author: Lorenz A. Kapsner [cre, aut] (<https://orcid.org/0000-0003-1866-860X>),
   Universitätsklinikum Erlangen [cph]
 Maintainer: Lorenz A. Kapsner <lorenz.kapsner@uk-erlangen.de>
 Repository: CRAN
-Date/Publication: 2022-02-21 13:30:19 UTC
+Date/Publication: 2022-05-20 09:40:02 UTC

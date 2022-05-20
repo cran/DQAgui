@@ -9,7 +9,7 @@ launch_app(
   utils_path = system.file("demo_data/utilities", package = "DQAstats"),
   mdr_filename = "mdr_example_data.csv",
   logfile_dir = tempdir(),
-  parallel = TRUE,
+  parallel = FALSE,
   ncores = 2
 )
 }
@@ -29,8 +29,8 @@ folder `MISC`) and a markdown template to create the PDF report
 \item{logfile_dir}{Is the absolute path to the directory where the logfile
 will be stored. If not path is provided the tempdir() will be used.}
 
-\item{parallel}{A boolean. If TRUE (the default value), initializing
-`future::plan("multiprocess")` before running the code.}
+\item{parallel}{A boolean. If TRUE, initializing a `future::plan()`
+for running the code (default: FALSE).}
 
 \item{ncores}{A integer. The number of cores to use. Caution: you would
 probably like to choose a low number when operating on large datasets.

@@ -47,7 +47,7 @@ module_dashboard_server <-
   function(input, output, session, rv, input_re) {
     output$dash_instruction <- renderText({
       paste0(
-        "Please load your metadata repository first and then configure ",
+        "Please load your metadata repository first and then configure\n",
         "and test your source and target parameters in the config tab.\n",
         "Results will be displayed here afterwards."
       )
@@ -247,6 +247,7 @@ module_dashboard_server <-
               # Assign source-values to target:
               rv <- set_target_equal_to_source(rv)
               rv$data_target <- rv$data_source
+              rv$target$sql <- rv$source$sql
             } else {
               DIZtools::feedback(
                 print_this = paste0(
@@ -541,6 +542,23 @@ module_dashboard_server <-
           " min."
         )
       })
+      output$dash_config <- renderText({
+        paste0(
+          "Source system name: ",
+          rv$source$system_name,
+          "\nTarget system name: ",
+          rv$target$system_name,
+          ifelse(
+            isTRUE(rv$restricting_date$use_it),
+            paste0(
+              "\n\nAnalysis with datetime restrictions:",
+              "\nStart date: ", rv$restricting_date$start,
+              "\nEnd date: ", rv$restricting_date$end
+            ),
+            ""
+          )
+        )
+      })
       shinyjs::show("dash_instruction")
     })
   }
@@ -576,7 +594,14 @@ module_dashboard_ui <- function(id) {
     waiter::use_waiter(),
     box(
       title = "Welcome to your Data-Quality-Analysis Dashboard",
-      verbatimTextOutput(ns("dash_instruction")),
+      column(
+        6,
+        verbatimTextOutput(ns("dash_instruction"))
+      ),
+      column(
+        6,
+        verbatimTextOutput(ns("dash_config"))
+      ),
       width = 12
     ),
     column(

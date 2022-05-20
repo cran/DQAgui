@@ -253,7 +253,7 @@ fix_sql_display <- function(text) {
 #'
 #'
 check_load_data_button <- function(rv, session) {
-  debugging <- TRUE
+  debugging <- FALSE
   if (debugging) {
     systems <- c("csv", "postgres", "oracle")
   } else {
@@ -286,11 +286,21 @@ check_load_data_button <- function(rv, session) {
   }
 
   if (res) {
+    DIZtools::feedback(
+      print_this = paste0(
+        "Determining the dataelements for source_db = '",
+        rv$source$system_name,
+        "' and target_db = '",
+        rv$target$system_name,
+        "' using DQAstats::create_helper_vars()."
+      ),
+      findme = "28f400ebb3"
+    )
     # Determine the different dataelements:
     helper_vars_tmp <- DQAstats::create_helper_vars(
       mdr = rv$mdr,
-      target_db = rv$target$system_name,
-      source_db = rv$source$system_name
+      source_db = rv$source$system_name,
+      target_db = rv$target$system_name
     )
     rv$dqa_assessment <- helper_vars_tmp$dqa_assessment
 
@@ -494,9 +504,11 @@ test_connection_button_clicked <-
           icon = shiny::icon("check")
         )
         shinyjs::disable(button_label)
+
         rv[[source_target]]$system_name <-
           rv$displaynames[get("displayname") == input_system,
                           get("source_system_name")]
+
         rv[[source_target]]$system_type <- db_type
         label_feedback_txt <-
           paste0(source_target, "_system_feedback_txt")
@@ -576,6 +588,7 @@ print_runtime <-
 
 datepicker_get_list_of_ranges <- function() {
   res <- list(
+    "DQ check" = c(Sys.Date() - 99, Sys.Date() - 7),
     "Today" = c(Sys.Date(), Sys.Date()),
     "Yesterday" = c(Sys.Date() - 1, Sys.Date()),
     # "Last 3 days" = c(Sys.Date() - 2, Sys.Date()),
@@ -586,6 +599,27 @@ datepicker_get_list_of_ranges <- function() {
     )), as.Date(format(
       Sys.Date(), paste0("%Y-%m-", lubridate::days_in_month(Sys.Date())[[1]])
     ))),
+    "Last calendar year" = c(
+      as.Date(
+        paste0(substr(Sys.Date(), 1, 4) %>%
+                 as.numeric() %>%
+                 -1 %>%
+                 as.character(),
+               "-01-01"
+        )
+      ),
+      as.Date(
+        paste0(substr(Sys.Date(), 1, 4) %>%
+                 as.numeric() %>%
+                 -1 %>%
+                 as.character(),
+               "-12-31"
+        )
+      )
+    ),
+    ">= 2010" = c(as.Date("2010-01-01"), Sys.Date()),
+    ">= 2015" = c(as.Date("2015-01-01"), Sys.Date()),
+    ">= 2020" = c(as.Date("2020-01-01"), Sys.Date()),
     "Everything" = c(as.Date("1970-01-01"), Sys.Date())
   )
 
@@ -718,15 +752,15 @@ render_quick_checks <- function(dat_table) {
     ) %>%
     DT::formatStyle(columns = 2,
                     backgroundColor = DT::styleEqual(
-                      c("passed", "failed"),
-                      c("lightgreen", "red"))) %>%
+                      c("passed", "failed", "no data available"),
+                      c("lightgreen", "red", "orange"))) %>%
     DT::formatStyle(columns = 3,
                     backgroundColor = DT::styleEqual(
-                      c("passed", "failed"),
-                      c("lightgreen", "red"))) %>%
+                      c("passed", "failed", "no data available"),
+                      c("lightgreen", "red", "orange"))) %>%
     DT::formatStyle(columns = 4,
                     backgroundColor = DT::styleEqual(
-                      c("passed", "failed"),
-                      c("lightgreen", "red")))
+                      c("passed", "failed", "no data available"),
+                      c("lightgreen", "red", "orange"))) %>%
   return(out)
 }

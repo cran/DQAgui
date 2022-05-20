@@ -233,150 +233,102 @@ module_atemp_pl_server <- function(input, output, session, rv, input_re) {
         })
 
 
+        # for some strange reason, lapply is required to dynamically assign
+        # shiny outputs (for-loop doesn't work)
+        lapply(
+          X = c("source", "target"),
+          FUN = function(i) {
 
-        # conformance source
-        # render conformance checks (only if value set present)
-        if (!is.na(desc_out$source_data$checks$constraints)) {
-          # workaround to tell ui, that value_set is there
-          output$got_valueset_s <- reactive({
-            return(TRUE)
+            raw_data <- paste0(i, "_data")
+            vset <- paste0("got_valueset_", substring(raw_data, 1, 1))
+
+            # conformance source
+            # render conformance checks (only if value set present)
+            if (!is.null(value_conf[[raw_data]])) {
+              # workaround to tell ui, that value_set is there
+              output[[vset]] <- reactive({
+                return(TRUE)
+              })
+
+              value_conformance_formatted <-
+                DQAstats::format_value_conformance_results(
+                  results = value_conf,
+                  desc_out = desc_out,
+                  source = raw_data
+                )
+
+              output[[paste0("pl_checks_", i)]] <- renderUI({
+                h <- h5(tags$b("Constraining values/rules:"))
+                v <- verbatimTextOutput(
+                  outputId = paste0(
+                    "moduleAtempPlausibility-pl_checks_", i, "_valueset"
+                  )
+                )
+
+
+                ch <- h5(tags$b("Value conformance:"))
+                ce <- h5(paste0(
+                  "Conformance check: ",
+                  gsub(
+                    pattern = "Conformance check\\: ",
+                    replacement = "",
+                    x = value_conformance_formatted$conformance_check
+                  )
+                ))
+                cu <- uiOutput(
+                  paste0(
+                    "moduleAtempPlausibility-pl_conformance_", i
+                  )
+                )
+                do.call(tagList, list(h, v, tags$hr(), ch, ce, cu))
+              })
+
+
+
+              if (is.null(value_conformance_formatted$kable)) {
+                output[[paste0("pl_checks_", i, "_valueset")]] <- renderText({
+                  gsub(
+                    pattern = "Constraining values\\/rules\\: ",
+                    replacement = "",
+                    x = value_conformance_formatted$constraining_rules
+                  )
+                })
+              } else {
+                output[[paste0("pl_checks_", i, "_valueset")]] <- renderPrint({
+                  as.list(value_conformance_formatted$kable)
+                })
+              }
+
+              # render automatic conformance checks source
+              # value conformance
+              if (!is.null(value_conformance_formatted$conformance_results)) {
+                output[[paste0("pl_conformance_", i)]] <- renderUI({
+                  v <- verbatimTextOutput(
+                    outputId = paste0(
+                      "moduleAtempPlausibility-pl_conformance_", i, "_results"
+                    )
+                  )
+                  do.call(tagList, list(v))
+                })
+
+                output[[paste0("pl_conformance_", i, "_results")]] <-
+                  renderText({
+                    value_conformance_formatted$conformance_results
+                  })
+              } else {
+                output[[paste0("pl_conformance_", i)]] <- renderUI({
+
+                })
+              }
+
+            } else {
+              # workaround to tell ui, that value_set is not there
+              output[[vset]] <- reactive({
+                return(FALSE)
+              })
+            }
+            outputOptions(output, vset, suspendWhenHidden = FALSE)
           })
-
-          output$pl_checks_source <- renderUI({
-            h <- h5(tags$b("Constraining values/rules:"))
-            v <- verbatimTextOutput(
-              outputId = "moduleAtempPlausibility-pl_checks_source_valueset"
-            )
-
-
-            ch <- h5(tags$b("Value conformance:"))
-            ce <- h5(paste0(
-              "Conformance check: ",
-              ifelse(
-                value_conf$source_data$conformance_error,
-                "failed",
-                "passed"
-              )
-            ))
-            cu <- uiOutput("moduleAtempPlausibility-pl_conformance_source")
-            do.call(tagList, list(h, v, tags$hr(), ch, ce, cu))
-          })
-
-          json_obj_src <- jsonlite::fromJSON(
-            txt = desc_out$source_data$checks$constraints
-          )
-
-          if (desc_out$source_data$checks$var_type == "enumerated") {
-            output$pl_checks_source_valueset <- renderText({
-              paste(json_obj_src$value_set, collapse = ", ")
-            })
-          } else if (desc_out$source_data$checks$var_type %in%
-                     c("integer", "float")) {
-            output$pl_checks_source_valueset <- renderPrint({
-              json_obj_src$range
-            })
-          }
-
-          # render automatic conformance checks source
-          # value conformance
-          if (isTRUE(value_conf$source_data$conformance_error)) {
-            output$pl_conformance_source <- renderUI({
-              w_id <- "moduleAtempPlausibility-pl_conformance_source_results"
-              v <- verbatimTextOutput(
-                outputId = w_id
-              )
-              do.call(tagList, list(v))
-            })
-
-            output$pl_conformance_source_results <- renderText({
-              value_conf$source_data$conformance_results
-            })
-          } else {
-            output$pl_conformance_source <- renderUI({
-            })
-          }
-
-        } else {
-          # workaround to tell ui, that value_set is not there
-          output$got_valueset_s <- reactive({
-            return(FALSE)
-          })
-        }
-        outputOptions(output, "got_valueset_s", suspendWhenHidden = FALSE)
-
-
-        # conformance target
-        # render conformance checks (only if value set present)
-        if (!is.na(desc_out$target_data$checks$constraints)) {
-          # workaround to tell ui, that value_set is there
-          output$got_valueset_t <- reactive({
-            return(TRUE)
-          })
-
-          output$pl_checks_target <- renderUI({
-            h <- h5(tags$b("Constraining values/rules:"))
-            v <- verbatimTextOutput(
-              outputId = "moduleAtempPlausibility-pl_checks_target_valueset"
-            )
-
-
-            ch <- h5(tags$b("Value conformance:"))
-            ce <- h5(paste0(
-              "Conformance check: ",
-              ifelse(
-                value_conf$target_data$conformance_error,
-                "failed",
-                "passed"
-              )
-            ))
-            cu <- uiOutput("moduleAtempPlausibility-pl_conformance_target")
-            do.call(tagList, list(h, v, tags$hr(), ch, ce, cu))
-          })
-
-          json_obj_tar <- jsonlite::fromJSON(
-            txt = desc_out$target_data$checks$constraints
-          )
-
-          if (desc_out$target_data$checks$var_type == "enumerated") {
-            output$pl_checks_target_valueset <- renderText({
-              paste(json_obj_tar$value_set, collapse = ", ")
-            })
-          } else if (desc_out$target_data$checks$var_type %in%
-                     c("integer", "float")) {
-            output$pl_checks_target_valueset <- renderPrint({
-              json_obj_tar$range
-            })
-          }
-
-
-          # render automatic conformance checks target
-          # value conformance
-          if (isTRUE(value_conf$target_data$conformance_error)) {
-            output$pl_conformance_target <- renderUI({
-              # workaround (lintr wants max. 80 chars per line)
-              w_id2 <- "moduleAtempPlausibility-pl_conformance_target_results"
-              v <- verbatimTextOutput(
-                outputId = w_id2
-              )
-              do.call(tagList, list(v))
-            })
-
-            output$pl_conformance_target_results <- renderText({
-              value_conf$target_data$conformance_results
-            })
-          } else {
-            output$pl_conformance_target <- renderUI({
-
-            })
-          }
-
-        } else {
-          # workaround to tell ui, that value_set is not there
-          output$got_valueset_t <- reactive({
-            return(FALSE)
-          })
-        }
-        outputOptions(output, "got_valueset_t", suspendWhenHidden = FALSE)
       })
   })
 }

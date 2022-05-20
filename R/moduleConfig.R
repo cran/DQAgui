@@ -294,19 +294,22 @@ module_config_server <-
           )
 
           ## Create mapping for display names:
-          tmp <- names(rv$settings)
-          names(tmp) <- names(rv$settings)
-          rv$displaynames <- lapply(tmp, function(x) {
-            ret <- get_display_name_from_settings(settings = rv$settings,
-                                                  prefilter = x)
-            return(ret)
-          }) %>%
-            data.table::as.data.table() %>%
-            data.table::transpose(keep.names = "displayname")
-          rm(tmp)
-          data.table::setnames(x = rv$displaynames,
-                               old = "V1",
-                               new = "source_system_name")
+          rv$displaynames <- data.table::data.table(
+            "source_system_name" = character(),
+            "displayname" = character())
+
+          for (system_name_tmp in names(rv$settings)) {
+            rv$displaynames <- data.table::rbindlist(list(
+              rv$displaynames,
+              list(
+                "source_system_name" = system_name_tmp,
+                "displayname" =
+                  get_display_name_from_settings(settings = rv$settings,
+                                                 prefilter = system_name_tmp)
+              )
+            ), use.names = TRUE)
+          }
+
 
           # - Different system-types:
           rv$system_types <-
@@ -354,7 +357,8 @@ module_config_server <-
 
             csv_system_names <-
               rv$displaynames[get("source_system_name") %in%
-                                csv_system_names, get("displayname")]
+                                csv_system_names, get("displayname")] %>%
+              unlist(use.names = FALSE)
 
             if (length(csv_system_names) > 0) {
               # Show buttons to prefill diff. systems presettings:
@@ -393,10 +397,11 @@ module_config_server <-
             #% GROUP BY source_system_name
             postgres_system_names <-
               rv$systems[get("source_system_type") == "postgres" &
-                           !is.na(get("source_system_name")),
-                         unique(get("source_system_name"))]
+                           !is.na(get("source_system_name")), ] %>%
+              .[["source_system_name"]] %>%
+              unique()
             DIZtools::feedback(
-              postgres_system_names,
+              print_this = paste(postgres_system_names, collapse = ", "),
               prefix = "postgres_system_names: ",
               findme = "be136f5ab6",
               logfile_dir = rv$log$logfile_dir,
@@ -405,7 +410,8 @@ module_config_server <-
 
             postgres_system_names <-
               rv$displaynames[get("source_system_name") %in%
-                                postgres_system_names, get("displayname")]
+                                postgres_system_names, ][["displayname"]] %>%
+              unlist(use.names = FALSE)
 
             if (length(postgres_system_names) > 0) {
               # Show buttons to prefill diff. systems presettings:
@@ -446,8 +452,10 @@ module_config_server <-
             #% GROUP BY source_system_name
             oracle_system_names <-
               rv$systems[get("source_system_type") == "oracle" &
-                           !is.na(get("source_system_name")),
-                         unique(get("source_system_name"))]
+                           !is.na(get("source_system_name")), ] %>%
+              .[["source_system_name"]] %>%
+              unique()
+
             DIZtools::feedback(
               oracle_system_names,
               prefix = "oracle_system_names: ",
@@ -458,7 +466,8 @@ module_config_server <-
 
             oracle_system_names <-
               rv$displaynames[get("source_system_name") %in%
-                                oracle_system_names, get("displayname")]
+                                oracle_system_names, ][["displayname"]] %>%
+              unlist(use.names = FALSE)
 
             if (length(oracle_system_names) > 0) {
               # Show buttons to prefill diff. systems presettings:
@@ -894,7 +903,7 @@ module_config_server <-
         )
       } else if (isFALSE(input$target_system_to_source_system_btn)) {
         ## Target was == source but should become different now:
-        rv$target_is_source <- F
+        rv$target_is_source <- FALSE
         rv$target <- NULL
         output$target_system_feedback_txt <- NULL
         # Show target-settings-tabs again:
@@ -1679,7 +1688,7 @@ module_config_ui <- function(id) {
           ),
           box(
             id = ns("config_select_dqa_assessment_box"),
-            title = "Analyse the following data elements",
+            title = "Analyze the following data elements",
             hr(),
             actionButton(
               inputId = ns("select_all_assessment_variables"),

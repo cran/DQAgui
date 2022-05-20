@@ -199,20 +199,20 @@ module_descriptive_server <-
           raw_data <- paste0(i, "_data")
           vset <- paste0("got_valueset_", substring(raw_data, 1, 1))
 
-          if (desc_out[[raw_data]]$checks$var_type == "datetime") {
-            if (is.na(desc_out[[raw_data]]$checks$constraints)) {
-              desc_out[[raw_data]]$checks$constraints <-
-                value_conf[[raw_data]]$rule
-            }
-          }
-
           # conformance source
           # render conformance checks (only if value set present)
-          if (!is.na(desc_out[[raw_data]]$checks$constraints)) {
+          if (!is.null(value_conf[[raw_data]])) {
             # workaround to tell ui, that value_set is there
             output[[vset]] <- reactive({
               return(TRUE)
             })
+
+            value_conformance_formatted <-
+              DQAstats::format_value_conformance_results(
+                results = value_conf,
+                desc_out = desc_out,
+                source = raw_data
+              )
 
             output[[paste0("descr_checks_", i)]] <- renderUI({
               h <- h5(tags$b("Constraining values/rules:"))
@@ -226,10 +226,10 @@ module_descriptive_server <-
               ch <- h5(tags$b("Value conformance:"))
               ce <- h5(paste0(
                 "Conformance check: ",
-                ifelse(
-                  value_conf[[raw_data]]$conformance_error,
-                  "failed",
-                  "passed"
+                gsub(
+                  pattern = "Conformance check\\: ",
+                  replacement = "",
+                  x = value_conformance_formatted$conformance_check
                 )
               ))
               cu <- uiOutput(
@@ -240,35 +240,25 @@ module_descriptive_server <-
               do.call(tagList, list(h, v, tags$hr(), ch, ce, cu))
             })
 
-            if (desc_out[[raw_data]]$checks$var_type != "datetime") {
-              json_obj <-
-                jsonlite::fromJSON(desc_out[[raw_data]]$checks$constraints)
-            }
 
-            if (desc_out[[raw_data]]$checks$var_type == "enumerated") {
+
+            if (is.null(value_conformance_formatted$kable)) {
               output[[paste0("descr_checks_", i, "_valueset")]] <- renderText({
-                paste(json_obj$value_set, collapse = ", ")
+                gsub(
+                  pattern = "Constraining values\\/rules\\: ",
+                  replacement = "",
+                  x = value_conformance_formatted$constraining_rules
+                )
               })
-            } else if (desc_out[[raw_data]]$checks$var_type %in%
-                       c("integer", "float")) {
+            } else {
               output[[paste0("descr_checks_", i, "_valueset")]] <- renderPrint({
-                json_obj$range
-              })
-            } else if (desc_out[[raw_data]]$checks$var_type ==
-                       "string") {
-              output[[paste0("descr_checks_", i, "_valueset")]] <- renderText({
-                json_obj$regex
-              })
-            } else if (desc_out[[raw_data]]$checks$var_type ==
-                       "datetime") {
-              output[[paste0("descr_checks_", i, "_valueset")]] <- renderText({
-                value_conf[[raw_data]]$rule
+                as.list(value_conformance_formatted$kable)
               })
             }
 
             # render automatic conformance checks source
             # value conformance
-            if (isTRUE(value_conf[[raw_data]]$conformance_error)) {
+            if (!is.null(value_conformance_formatted$conformance_results)) {
               output[[paste0("descr_conformance_", i)]] <- renderUI({
                 v <- verbatimTextOutput(
                   outputId = paste0(
@@ -279,7 +269,7 @@ module_descriptive_server <-
               })
 
               output[[paste0("descr_conform_", i, "_results")]] <- renderText({
-                value_conf[[raw_data]]$conformance_results
+                value_conformance_formatted$conformance_results
               })
             } else {
               output[[paste0("descr_conformance_", i)]] <- renderUI({

@@ -19,11 +19,23 @@ shiny::shinyUI(
   shiny::tagList(
     shinydashboard::dashboardPage(
       skin = "black",
+      title = "DQAgui",
 
       # Application title
-      shinydashboard::dashboardHeader(title = "DQAgui"),
+      header = shinydashboard::dashboardHeader(
+        title = shiny::tagList(
+          shiny::img(src = paste0(
+            "https://github.com/miracum/dqa-dqagui/raw/master",
+            "/man/figures/logo.png"
+          )
+          , height = 46
+          ),
+          "DQAgui"
+        )
 
-      shinydashboard::dashboardSidebar(
+      ),
+
+      sidebar = shinydashboard::dashboardSidebar(
 
         # Include shinyjs in the UI Sidebar
         shinyjs::useShinyjs(),
@@ -68,6 +80,7 @@ shiny::shinyUI(
               "Version:",
               "<br/>R: ",
               paste(R.Version()[c("major", "minor")], collapse = "."),
+              "<br/>DIZtools: ", utils::packageVersion("DIZtools"),
               "<br/>DIZutils: ", utils::packageVersion("DIZutils"),
               "<br/>DQAstats: ", utils::packageVersion("DQAstats"),
               "<br/>DQAgui: ", utils::packageVersion("DQAgui"),
@@ -77,7 +90,7 @@ shiny::shinyUI(
         )
       ),
 
-      shinydashboard::dashboardBody(
+      body = shinydashboard::dashboardBody(
 
         # Include shinyjs in the UI Body
         shinyjs::useShinyjs(),
