@@ -167,13 +167,13 @@ module_uniq_plaus_ui <- function(id) {
     ),
     fluidRow(
       box(
-        title = "Source Data System",
+        title = "Source Database",
         h5(tags$b("Results")),
         uiOutput(ns("pl_selection_source_table")),
         width = 6
       ),
       box(
-        title = "Target Data System",
+        title = "Target Database",
         h5(tags$b("Results")),
         uiOutput(ns("pl_selection_target_table")),
         width = 6

@@ -42,19 +42,74 @@ test_that("DQAgui shiny app / launch_app() works", {
     rv$target$settings$path <- Sys.getenv("CSV_SOURCE_BASEPATH")
     DQAgui:::check_load_data_button(rv, session)
     session$flushReact()
-    session$setInputs(`moduleConfig-config_sitename` = "undefined")
+    session$setInputs(`moduleConfig-config_sitename` = "DEMO")
     session$setInputs(`moduleConfig-date_restriction_slider` = FALSE)
     session$setInputs(`moduleConfig-select_dqa_assessment_variables` =
                         rv$dqa_assessment[["designation"]])
     session$setInputs(`moduleConfig-dash_load_btn` = "click")
 
-    expect_snapshot(rv)
-    expect_snapshot(rv$results_descriptive)
-    #%expect_snapshot(rv$results_plausibility_atemporal)
-    expect_snapshot(rv$conformance$value_conformance)
-    expect_snapshot(rv$completeness)
-    expect_snapshot(rv$checks$value_conformance)
-    expect_snapshot(rv$checks$etl)
-    expect_snapshot(rv$datamap)
+    # reactive values to list
+    output <- shiny::reactiveValuesToList(rv)
+
+    # delete time-specific fields
+    output$start_time <- NULL
+    output$end_time <- NULL
+    output$duration <- NULL
+
+    expect_snapshot_value(
+      x = names(output),
+      style = "json2",
+      cran = FALSE,
+      tolerance = 10e-1,
+      ignore_function_env = TRUE
+    )
+
+    expect_snapshot_value(
+      x = output$results_plausibility_atemporal,
+      style = "json2",
+      cran = FALSE,
+      tolerance = 10e-1,
+      ignore_function_env = TRUE
+    )
+
+    expect_snapshot_value(
+      x = output$conformance$value_conformance,
+      style = "json2",
+      cran = FALSE,
+      tolerance = 10e-1,
+      ignore_function_env = TRUE
+    )
+
+    expect_snapshot_value(
+      x = output$completeness,
+      style = "json2",
+      cran = FALSE,
+      tolerance = 10e-1,
+      ignore_function_env = TRUE
+    )
+
+    expect_snapshot_value(
+      x = output$checks$value_conformance,
+      style = "json2",
+      cran = FALSE,
+      tolerance = 10e-1,
+      ignore_function_env = TRUE
+    )
+
+    expect_snapshot_value(
+      x = output$checks$etl,
+      style = "json2",
+      cran = FALSE,
+      tolerance = 10e-1,
+      ignore_function_env = TRUE
+    )
+
+    expect_snapshot_value(
+      x = output$datamap,
+      style = "json2",
+      cran = FALSE,
+      tolerance = 10e-1,
+      ignore_function_env = TRUE
+    )
   })
 })

@@ -202,7 +202,7 @@ module_atemp_pl_server <- function(input, output, session, rv, input_re) {
               "n",
               "valids",
               "missings",
-              "distinct"), with = F]
+              "distinct"), with = FALSE]
             data.table::data.table(
               " " = c(
                 "n:",
@@ -370,7 +370,7 @@ module_atemp_pl_ui <- function(id) {
     ),
     fluidRow(
       box(
-        title = "Source Data System",
+        title = "Source Database",
         width = 6,
         fluidRow(
           column(8,
@@ -402,7 +402,7 @@ module_atemp_pl_ui <- function(id) {
           ))
       ),
       box(
-        title = "Target Data System",
+        title = "Target Database",
         width = 6,
         fluidRow(
           column(8,

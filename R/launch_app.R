@@ -29,11 +29,13 @@
 #' @param mdr_filename The filename of the mdr (e.g. "mdr_example_data.csv").
 #' @param logfile_dir Is the absolute path to the directory where the logfile
 #'   will be stored. If not path is provided the tempdir() will be used.
-#' @param parallel A boolean. If TRUE, initializing a `future::plan()`
-#'   for running the code (default: FALSE).
+#' @param parallel A boolean. If `TRUE`, initializing a `future::plan()`
+#'   for running the code (default: `FALSE`).
 #' @param ncores A integer. The number of cores to use. Caution: you would
 #'   probably like to choose a low number when operating on large datasets.
 #'   Default: 2.
+#' @param demo_usage A boolean. If `TRUE`, a box is shown on the dashboard with
+#'   further instructions on how to use / configure the tool.
 #'
 #' @return Executing this function returns a DQAgui shiny application.
 #'
@@ -54,7 +56,8 @@ launch_app <- function(port = 3838,
                        mdr_filename = "mdr_example_data.csv",
                        logfile_dir = tempdir(),
                        parallel = FALSE,
-                       ncores = 2) {
+                       ncores = 2,
+                       demo_usage = FALSE) {
 
   DIZtools::assign_to_R_env(key = "utils_path",
                             val = utils_path,
@@ -74,6 +77,10 @@ launch_app <- function(port = 3838,
 
   DIZtools::assign_to_R_env(key = "ncores",
                             val = ncores,
+                            pos = 1L)
+
+  DIZtools::assign_to_R_env(key = "demo_usage",
+                            val = demo_usage,
                             pos = 1L)
 
   options(shiny.port = port)

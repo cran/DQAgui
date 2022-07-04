@@ -62,7 +62,7 @@ module_log_server <-
                 "[[:digit:]]{2}\\-",
                 "[[:digit:]]{6}){0,1}\\.log$" # nolint
               )),
-            decreasing = T
+            decreasing = TRUE
           )
         )
         rv$log$populated_old_logfiles_list <- TRUE

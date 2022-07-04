@@ -266,7 +266,7 @@ module_config_server <-
           rv$systems <- rv$systems[!is.na(get("source_system_name"))]
           DIZtools::feedback(
             print_this = paste0(
-              "Different systems found in the MDR: ",
+              "Different databases found in the MDR: ",
               paste(unique(rv$systems[["source_system_name"]]),
                     collapse = ", ")
             ),
@@ -281,17 +281,43 @@ module_config_server <-
                        unique(get("source_system_name"))]
 
           # FIXME remove settings reading in the future
-          rv$settings <-
-            sapply(unique_systems, function(x) {
-              DIZutils::get_config_env(
-                system_name = x,
-                logfile_dir = rv$log$logfile_dir,
-                headless = rv$headless
-              )
-            },
-            USE.NAMES = TRUE,
-            simplify = FALSE
+          settings_pattern <- paste0(
+            "^%s_(\\d+_)?DBNAME$"
           )
+
+          rv$settings <-
+            sapply(
+              X = unique_systems,
+              FUN = function(sys_name) {
+                grep_res <- grepl(
+                  pattern = sprintf(settings_pattern, toupper(sys_name)),
+                  x = names(Sys.getenv())
+                )
+                if (sum(grep_res) > 1) {
+                  env_res <- names(Sys.getenv())[grep_res]
+                  include_pattern <- paste0(
+                    "^%s_(\\d+_)DBNAME$"
+                  )
+                  subsystems <- env_res[grepl(
+                    pattern = sprintf(include_pattern, toupper(sys_name)),
+                    x = env_res
+                  )]
+                  subsystems <- gsub(
+                    pattern = "_DBNAME$",
+                    replacement = "",
+                    x = subsystems
+                  )
+                  ret <- lapply(X = subsystems, FUN = get_from_env)
+                  ret[["nested"]] <- TRUE
+                  return(ret)
+                } else {
+                  return(get_from_env(sys_name))
+                }
+              },
+              USE.NAMES = TRUE,
+              simplify = FALSE
+            )
+
 
           ## Create mapping for display names:
           rv$displaynames <- data.table::data.table(
@@ -309,7 +335,6 @@ module_config_server <-
               )
             ), use.names = TRUE)
           }
-
 
           # - Different system-types:
           rv$system_types <-
@@ -348,7 +373,7 @@ module_config_server <-
                            !is.na(get("source_system_name")),
                          unique(get("source_system_name"))]
             DIZtools::feedback(
-              csv_system_names,
+              paste0(csv_system_names, collapse = ", "),
               prefix = "csv_system_names: ",
               findme = "5a083a3d53",
               logfile_dir = rv$log$logfile_dir,
@@ -363,12 +388,26 @@ module_config_server <-
             if (length(csv_system_names) > 0) {
               # Show buttons to prefill diff. systems presettings:
               # - Add a button/choice/etc. for each system:
-              shiny::updateSelectInput(session = session,
-                                inputId = "source_csv_presettings_list",
-                                choices = csv_system_names)
-              shiny::updateSelectInput(session = session,
-                                inputId = "target_csv_presettings_list",
-                                choices = csv_system_names)
+              shiny::updateSelectInput(
+                session = session,
+                inputId = "source_csv_presettings_list",
+                choices = csv_system_names,
+                selected = unlist(ifelse(
+                  test = isTRUE(rv$demo_usage),
+                  yes = csv_system_names[[1]],
+                  no = list(NULL)
+                ))
+              )
+              shiny::updateSelectInput(
+                session = session,
+                inputId = "target_csv_presettings_list",
+                choices = csv_system_names,
+                selected = unlist(ifelse(
+                  test = isTRUE(rv$demo_usage),
+                  yes = csv_system_names[[2]],
+                  no = list(NULL)
+                ))
+              )
             }
           }
           if (!("postgres" %in% tolower(rv$system_types))) {
@@ -388,7 +427,7 @@ module_config_server <-
             )
             shiny::removeTab(inputId = "target_tabs",
                              target = system_types_mapping[["postgres"]])
-          } else{
+          } else {
             # Fill the tab with presettings
             # - filter for all system_names with
             #% system_type == postgres
@@ -443,7 +482,7 @@ module_config_server <-
             )
             shiny::removeTab(inputId = "target_tabs",
                              target = system_types_mapping[["oracle"]])
-          } else{
+          } else {
             # Fill the tab with presettings
             # - filter for all system_names with
             #% system_type == oracle
@@ -527,7 +566,7 @@ module_config_server <-
                         suspendWhenHidden = FALSE)
           output$source_system_feedback_txt <-
             renderText({
-              "\U26A0 Please select a source system to load the data."
+              "\U26A0 Please select a source database to load the data."
             })
         }
         check_load_data_button(rv, session)
@@ -582,7 +621,7 @@ module_config_server <-
         updateTextInput(session = session,
                         inputId = "config_source_postgres_password",
                         value = config_stuff[["password"]])
-      } else{
+      } else {
         updateTextInput(session = session,
                         inputId = "config_source_postgres_dbname",
                         value = "")
@@ -655,7 +694,7 @@ module_config_server <-
         updateTextInput(session = session,
                         inputId = "config_source_oracle_sid",
                         value = config_stuff[["sid"]])
-      } else{
+      } else {
         updateTextInput(session = session,
                         inputId = "config_source_oracle_dbname",
                         value = "")
@@ -730,7 +769,7 @@ module_config_server <-
         updateTextInput(session = session,
                         inputId = "config_target_postgres_password",
                         value = config_stuff[["password"]])
-      } else{
+      } else {
         updateTextInput(session = session,
                         inputId = "config_target_postgres_dbname",
                         value = "")
@@ -803,7 +842,7 @@ module_config_server <-
         updateTextInput(session = session,
                         inputId = "config_target_oracle_sid",
                         value = config_stuff[["sid"]])
-      } else{
+      } else {
         updateTextInput(session = session,
                         inputId = "config_target_oracle_dbname",
                         value = "")
@@ -892,7 +931,7 @@ module_config_server <-
         # Show feedback-box in the UI:
         output$target_system_feedback_txt <-
           renderText({
-            feedback_txt(system = "The source system", type = "target")
+            feedback_txt(system = "The source database", type = "target")
           })
         # Feedback to the console:
         DIZtools::feedback(
@@ -941,12 +980,18 @@ module_config_server <-
         })
 
         updateSelectInput(
-          session,
-          "config_sitename",
+          session = session,
+          inputId = "config_sitename",
           choices = rv$sitenames,
-          selected = ifelse(!is.null(rv$sitename),
-                            rv$sitename,
-                            character(0))
+          selected = ifelse(
+            test = !is.null(rv$sitename),
+            yes = rv$sitename,
+            no = ifelse(
+              test = isTRUE(rv$demo_usage),
+              yes = rv$sitenames[[1]],
+              no = character(0)
+            )
+          )
         )
       }
     })
@@ -989,22 +1034,39 @@ module_config_server <-
           # mdr is present:
         } else {
           # check if sitename is present
-          if (nchar(input_re()[["moduleConfig-config_sitename"]]) < 2 ||
-              any(grepl("\\s", input_re()[["moduleConfig-config_sitename"]]))) {
+          if (
+            nchar(input_re()[["moduleConfig-config_sitename"]]) < 2 ||
+            any(grepl("\\s", input_re()[["moduleConfig-config_sitename"]]))
+          ) {
+            msg <- paste0("There are no empty strings or spaces allowed in",
+            " the site name configuration.",
+            " Please select your site name."
+            )
+            DIZtools::feedback(
+              print_this = msg,
+              type = "Error",
+              ui = FALSE,
+              findme = "54362a3ab6",
+              logfile_dir = rv$log$logfile_dir
+            )
             # site name is missing:
             shiny::showModal(shiny::modalDialog(
               title = "The sitename is missing",
-              paste0(
-                "There are no empty strings or spaces allowed in",
-                " the site name configuration.",
-                " Please select your site name."
-              )
+              paste0(msg)
             ))
             error_tmp <- TRUE
           } else {
             # site name is present:
             rv$sitename <-
               input_re()[["moduleConfig-config_sitename"]]
+
+            DIZtools::feedback(
+              print_this = paste0("The site-name is: ", rv$sitename),
+              type = "Info",
+              ui = FALSE,
+              findme = "143f343ab6",
+              logfile_dir = rv$log$logfile_dir
+            )
           }
 
           # Check if at least one data element was selected for analyzation:
@@ -1041,13 +1103,13 @@ module_config_server <-
           }
 
           DIZtools::feedback(
-            paste0("Source system is ", rv$source$system_name),
+            paste0("Source database is ", rv$source$system_name),
             findme = "1d61685355",
             logfile_dir = rv$log$logfile_dir,
             headless = rv$headless
           )
           DIZtools::feedback(
-            paste0("Target system is ", rv$target$system_name),
+            paste0("Target database is ", rv$target$system_name),
             findme = "eaf72ed747",
             logfile_dir = rv$log$logfile_dir,
             headless = rv$headless
@@ -1082,6 +1144,8 @@ module_config_server <-
             ),
             paste0(tempdir(), "/_settings/global_settings.JSON")
           )
+        } else {
+          stop("An error occurred!")
         }
       }, error = function(cond) {
         DIZtools::feedback(

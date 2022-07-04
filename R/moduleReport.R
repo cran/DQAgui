@@ -92,6 +92,8 @@ module_report_server <- function(input,
       )
       rv$affectedids_exported <- TRUE
     }
+
+    waiter::waiter_hide()
   })
 
 

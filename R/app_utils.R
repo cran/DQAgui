@@ -21,6 +21,8 @@
 #' @param input Shiny server input object.
 #' @param target A boolean (default: TRUE).
 #' @param db_type (String) "postgres" or "oracle".
+#' @param displayname_gui (String) "i2b2 (Prod)"
+#' @inheritParams module_config_server
 #'
 #' @return This functions returns a data table of key-value pairs for the
 #'   database settings, which are parsed from the respective config tab
@@ -37,7 +39,12 @@
 #'
 #' @export
 #'
-get_db_settings <- function(input, target = TRUE, db_type) {
+get_db_settings <-
+  function(input,
+           target = TRUE,
+           db_type,
+           displayname_gui,
+           rv) {
   # create description of column selections
   vec <- c("dbname", "host", "port", "user", "password")
   source_target <- ifelse(target, "target", "source")
@@ -65,9 +72,13 @@ get_db_settings <- function(input, target = TRUE, db_type) {
     return(NULL)
 
   } else {
-    outlist <- lapply(stats::setNames(vec, vec), function(g) {
-      tab[get("keys") == g, get("value")]
-    })
+    outlist <-
+      lapply(stats::setNames(
+        object = tab[["keys"]],
+        nm = tab[["keys"]]
+      ), function(g) {
+        tab[get("keys") == g, get("value")]
+      })
     return(outlist)
   }
 }
@@ -85,7 +96,7 @@ feedback_txt <- function(system, type) {
     tags$b(system),
     " will be used as ",
     DIZtools::firstup(type),
-    " system.",
+    " database.",
     "\n\n",
     "To change, simply select and save another one."
   )
@@ -146,7 +157,7 @@ validate_inputs <- function(rv, input, output, session) {
                 logfile_dir = rv$log$logfile_dir,
                 headless = rv$headless
               )
-            } else{
+            } else {
               DIZtools::feedback(
                 print_this = paste0("Some ",
                                     source_target,
@@ -204,13 +215,13 @@ validate_inputs <- function(rv, input, output, session) {
           DIZtools::feedback(
             print_this = paste0(
               source_target,
-              " system ",
+              " database ",
               rv[[source_target]]$system_name,
               " not yet implemented."
             ),
             type = "Error",
             findme = "d0f0bfa2f3",
-            ui = T,
+            ui = TRUE,
             logfile_dir = rv$log$logfile_dir,
             headless = rv$headless
           )
@@ -220,10 +231,10 @@ validate_inputs <- function(rv, input, output, session) {
     }
   } else {
     DIZtools::feedback(
-      print_this = "Either source or target system is not set.",
+      print_this = "Either source or target database is not set.",
       type = "Warning",
       findme = "4e9400f8c9",
-      ui = T,
+      ui = TRUE,
       logfile_dir = rv$log$logfile_dir,
       headless = rv$headless
     )
@@ -423,7 +434,7 @@ test_connection_button_clicked <-
         db_type,
         " as ",
         source_target,
-        " system ..."
+        " database ..."
       ),
       findme = "7218f2e0fb",
       logfile_dir = rv$log$logfile_dir,
@@ -446,33 +457,57 @@ test_connection_button_clicked <-
       target <- FALSE
     }
 
-    # If we don't assign (= copy) it (input$source_oracle_presettings_list)
-    # here, the value will stay reactive and change every time we
-    # select another system. But it should only change if
-    # we also successfully tested the connection:
+    ## If we don't assign (= copy) it (input$source_oracle_presettings_list)
+    ## here, the value will stay reactive and change every time we
+    ## select another system. But it should only change if
+    ## we also successfully tested the connection:
     system_name_tmp <-
       paste0(source_target, "_", db_type, "_presettings_list")
     input_system <- input[[system_name_tmp]]
 
-    rv[[source_target]]$settings <- DQAgui::get_db_settings(input = input,
-                                                            target = target,
-                                                            db_type = db_type)
+
+    ## Info:
+    ## `input_system` is e.g. "i2b2 (Prod)" = displayname
+    ## `db_type` is e.g. "postgres"
+
+    rv[[source_target]]$settings <-
+      DQAgui::get_db_settings(
+        input = input,
+        target = target,
+        db_type = db_type,
+        displayname = input_system,
+        rv = rv
+      )
 
     if (db_type == "oracle") {
       lib_path_tmp <- Sys.getenv("KDB_DRIVER")
-    } else{
+    } else {
       lib_path_tmp <- NULL
     }
 
     if (!is.null(rv[[source_target]]$settings)) {
+      # set new environment variables here
+      # https://stackoverflow.com/a/12533155
+      lapply(
+        X = names(rv[[source_target]]$settings),
+        FUN = function(envvar_names) {
+          args <- list(rv[[source_target]]$settings[[envvar_names]])
+          names(args) <- paste0(
+            toupper(rv[[source_target]]$settings$dbname), "_",
+            toupper(envvar_names)
+          )
+          do.call(Sys.setenv, args)
+        }
+      )
+
       rv[[source_target]]$db_con <- DIZutils::db_connection(
         ## db_name = rv[[source_target]]$settings$dbname,
         db_type = db_type,
+        system_name = rv[[source_target]]$settings$dbname,
         headless = rv$headless,
         timeout = 2,
         logfile_dir = rv$log$logfile_dir,
-        from_env = FALSE,
-        settings = rv[[source_target]]$settings,
+        from_env = TRUE,
         lib_path = lib_path_tmp
       )
 
@@ -763,4 +798,24 @@ render_quick_checks <- function(dat_table) {
                       c("passed", "failed", "no data available"),
                       c("lightgreen", "red", "orange"))) %>%
   return(out)
+}
+
+get_from_env <- function(sysname) {
+  env_field_list <- c("dbname", "host", "port", "user", "password",
+                      "sid", "path", "driver", "displayname")
+
+  outlist <- sapply(
+    X = env_field_list,
+    function(field) {
+      do.call(Sys.getenv, list(
+        paste(toupper(sysname),
+               toupper(field),
+               sep = "_")
+      ))
+    },
+    simplify = FALSE,
+    USE.NAMES = TRUE
+  )
+
+  return(outlist[outlist != ""])
 }

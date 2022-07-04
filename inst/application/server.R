@@ -25,11 +25,14 @@ shiny::shinyServer(function(input, output, session) {
         utilspath = DIZtools::clean_path_name(utils_path),
         current_date = format(Sys.Date(), "%d. %B %Y", tz = "CET"),
         parallel = parallel,
-        ncores = ncores
+        ncores = ncores,
+        demo_usage = demo_usage
     )
 
     shiny::observe({
         if (is.null(rv$finished_onstart)) {
+
+
             # Clean old connections (e.g. after reloading the app):
             DIZtools::close_all_connections()
 
@@ -218,7 +221,7 @@ shiny::shinyServer(function(input, output, session) {
         shiny::req(rv$report_created)
 
         # set end_time
-        rv$end_time <- format(Sys.time(), usetz = T, tz = "CET")
+        rv$end_time <- format(Sys.time(), usetz = TRUE, tz = "CET")
         # calc time-diff
         rv$duration <-
             difftime(rv$end_time, rv$start_time, units = "mins")
@@ -245,7 +248,7 @@ shiny::shinyServer(function(input, output, session) {
                         tabName = "tab_uniq_plausibility")
                 ),
                 shinydashboard::menuItem(
-                    text = "Completeness",
+                    text = "Completeness Checks",
                     tabName = "tab_completeness",
                     icon = icon("chart-line")
                 ),

@@ -4,7 +4,7 @@
 \alias{get_db_settings}
 \title{get_db_settings}
 \usage{
-get_db_settings(input, target = TRUE, db_type)
+get_db_settings(input, target = TRUE, db_type, displayname_gui, rv)
 }
 \arguments{
 \item{input}{Shiny server input object.}
@@ -12,6 +12,10 @@ get_db_settings(input, target = TRUE, db_type)
 \item{target}{A boolean (default: TRUE).}
 
 \item{db_type}{(String) "postgres" or "oracle".}
+
+\item{displayname_gui}{(String) "i2b2 (Prod)"}
+
+\item{rv}{The global 'reactiveValues()' object, defined in server.R}
 }
 \value{
 This functions returns a data table of key-value pairs for the

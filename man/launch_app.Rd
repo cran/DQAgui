@@ -10,7 +10,8 @@ launch_app(
   mdr_filename = "mdr_example_data.csv",
   logfile_dir = tempdir(),
   parallel = FALSE,
-  ncores = 2
+  ncores = 2,
+  demo_usage = FALSE
 )
 }
 \arguments{
@@ -29,12 +30,15 @@ folder `MISC`) and a markdown template to create the PDF report
 \item{logfile_dir}{Is the absolute path to the directory where the logfile
 will be stored. If not path is provided the tempdir() will be used.}
 
-\item{parallel}{A boolean. If TRUE, initializing a `future::plan()`
-for running the code (default: FALSE).}
+\item{parallel}{A boolean. If `TRUE`, initializing a `future::plan()`
+for running the code (default: `FALSE`).}
 
 \item{ncores}{A integer. The number of cores to use. Caution: you would
 probably like to choose a low number when operating on large datasets.
 Default: 2.}
+
+\item{demo_usage}{A boolean. If `TRUE`, a box is shown on the dashboard with
+further instructions on how to use / configure the tool.}
 }
 \value{
 Executing this function returns a DQAgui shiny application.
