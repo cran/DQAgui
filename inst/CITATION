@@ -1,0 +1,33 @@
+citHeader("To cite the 'DQAgui' package in publications, please use:")
+
+year <- sub("-.*", "", meta$Date)
+if (length(year) == 0) year <- format(Sys.Date(), "%Y")
+note = paste("R package version", meta$Version)
+auth = format(Filter(function(p) "aut" %in% p$role, as.person(meta$Author)), c("given", "family"))
+title = paste("DQAgui:", meta$Title)
+url = meta$URL
+
+
+bibentry(
+  bibtype = "Article",
+  title = "DQAgui: a graphical user interface for the MIRACUM data quality assessment tool",
+  author = "Mang, Jonathan M and Seuchter, Susanne A and Gulden, Christian and Schild, Stefanie and Kraska, Detlef and Prokosch, Hans-Ulrich and Kapsner, Lorenz A",
+  year = "2022",
+  month = "aug",
+  pages = "1--11",
+  issn = "1472-6947",
+  doi = "10.1186/s12911-022-01961-z",
+  volume = "22",
+  number = "1",
+  journal = "BMC medical informatics and decision making",
+  language = "en"
+)
+
+bibentry(
+  bibtype = "manual",
+  title = title,
+  author = auth,
+  year = year,
+  note = note,
+  url = url
+)

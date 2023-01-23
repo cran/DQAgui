@@ -113,5 +113,5 @@ button_mdr <-
       mdr <- DQAstats::read_mdr(utils_path = utils_path,
                                 mdr_filename = mdr_filename)
     })
-    return(mdr)
+    return(list("mdr" = mdr, "sqls" = NULL))
   }

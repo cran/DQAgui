@@ -3,7 +3,7 @@
     {
       "type": "character",
       "attributes": {},
-      "value": ["sitename", "keys_source", "datamap", "finished_onstart", "affectedids_exported", "ncores", "aggregated_exported", "pl", "datamap_email", "headless", "keys_target", "dqa_assessment", "results_descriptive", "data_plausibility", "results_plausibility_unique", "utilspath", "current_date", "checks", "variable_list", "sitenames", "restricting_date", "data_target", "system_types", "settings", "mdr", "report_created", "mdr_filename", "getdata_source", "conformance", "displaynames", "source", "target", "target_is_source", "data_source", "results_plausibility_atemporal", "systems", "demo_usage", "start", "log", "completeness", "parallel", "create_report", "pl_uniq_vars_filter", "getdata_target", "pl_atemp_vars_filter"]
+      "value": ["sitename", "keys_source", "datamap", "finished_onstart", "sql_statements", "ncores", "aggregated_exported", "pl", "datamap_email", "headless", "keys_target", "dqa_assessment", "results_descriptive", "data_plausibility", "results_plausibility_unique", "utilspath", "current_date", "checks", "variable_list", "sitenames", "restricting_date", "data_target", "system_types", "settings", "mdr", "report_created", "mdr_filename", "getdata_source", "conformance", "displaynames", "source", "target", "target_is_source", "data_source", "results_plausibility_atemporal", "systems", "demo_usage", "start", "log", "completeness", "parallel", "create_report", "pl_uniq_vars_filter", "getdata_target", "pl_atemp_vars_filter"]
     }
 
 ---
@@ -1052,7 +1052,7 @@
                 "names": {
                   "type": "character",
                   "attributes": {},
-                  "value": ["conformance_error", "conformance_results", "affected_ids"]
+                  "value": ["conformance_error", "conformance_results"]
                 }
               },
               "value": [
@@ -1065,38 +1065,6 @@
                   "type": "character",
                   "attributes": {},
                   "value": ["Levels that are not conform with the value set:  \nyes"]
-                },
-                {
-                  "type": "list",
-                  "attributes": {
-                    "row.names": {
-                      "type": "integer",
-                      "attributes": {},
-                      "value": [1, 2]
-                    },
-                    "class": {
-                      "type": "character",
-                      "attributes": {},
-                      "value": ["data.table", "data.frame"]
-                    },
-                    ".internal.selfref": {
-                      "type": "externalptr",
-                      "attributes": {},
-                      "value": {}
-                    },
-                    "names": {
-                      "type": "character",
-                      "attributes": {},
-                      "value": ["dqa_bank_balance"]
-                    }
-                  },
-                  "value": [
-                    {
-                      "type": "double",
-                      "attributes": {},
-                      "value": [-36500, -64200]
-                    }
-                  ]
                 }
               ]
             }

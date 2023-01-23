@@ -39,10 +39,6 @@
 #'
 #' @return Executing this function returns a DQAgui shiny application.
 #'
-#' @import shiny shinydashboard
-#' @importFrom magrittr "%>%"
-#' @importFrom data.table .N ":="
-#'
 #' @examples
 #' if (interactive()) {
 #'   launch_app()
