@@ -3,7 +3,7 @@
 \name{validate_inputs}
 \alias{validate_inputs}
 \title{This function checks if all necessary input parameters
-  for source and target exist and are valid.}
+for source and target exist and are valid.}
 \usage{
 validate_inputs(rv, input, output, session)
 }
@@ -18,5 +18,5 @@ validate_inputs(rv, input, output, session)
 }
 \description{
 This function checks if all necessary input parameters
-  for source and target exist and are valid.
+for source and target exist and are valid.
 }

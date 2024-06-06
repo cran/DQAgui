@@ -3,7 +3,7 @@
 \name{feedback_txt}
 \alias{feedback_txt}
 \title{This function is used in the config-tab and displays the selected
-  system to the user.}
+system to the user.}
 \usage{
 feedback_txt(system, type)
 }
@@ -17,5 +17,5 @@ String containing the input params in a propper manner
 }
 \description{
 This function is used in the config-tab and displays the selected
-  system to the user.
+system to the user.
 }

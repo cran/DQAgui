@@ -142,6 +142,11 @@ shiny::shinyUI(
           ),
 
           shinydashboard::tabItem(
+            tabName = "tab_differences",
+            module_differences_ui("moduleDifferences")
+          ),
+
+          shinydashboard::tabItem(
             tabName = "tab_completeness",
             module_completeness_ui("moduleCompleteness")
           ),

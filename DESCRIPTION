@@ -1,6 +1,7 @@
 Package: DQAgui
 Title: Graphical User Interface for Data Quality Assessment
-Version: 0.2.3
+Version: 0.2.4
+Date: 2024-06-06
 Authors@R: c(
     person("Lorenz A.", "Kapsner", , "lorenz.kapsner@gmail.com", role = c("cre", "aut"),
            comment = c(ORCID = "0000-0003-1866-860X")),
@@ -9,19 +10,23 @@ Authors@R: c(
     person("MIRACUM - Medical Informatics in Research and Care in University Medicine", role = "fnd"),
     person("Universitätsklinikum Erlangen", role = "cph")
   )
-Description: A graphical user interface (GUI) to the functions implemented in the R package 'DQAstats'. Publication: Mang et al. (2021) <doi:10.1186/s12911-022-01961-z>.
+Description: A graphical user interface (GUI) to the functions implemented
+    in the R package 'DQAstats'. Publication: Mang et al. (2021)
+    <doi:10.1186/s12911-022-01961-z>.
 License: GPL-3
 URL: https://github.com/miracum/dqa-dqagui
 BugReports: https://github.com/miracum/dqa-dqagui/issues
-Encoding: UTF-8
-Date: 2023-08-30
-Imports: data.table, daterangepicker, DIZtools (>= 0.0.5), DIZutils (>=
-        0.1.1), DQAstats (>= 0.3.1), DT, jsonlite, knitr, lubridate,
+Imports: data.table, daterangepicker, DIZtools (>= 1.0.1), DIZutils (>=
+        0.1.2), DQAstats (>= 0.3.5), DT, jsonlite, knitr, lubridate,
         magrittr, parsedate, shiny, shinyalert, shinydashboard,
-        shinyFiles, shinyjs, shinyWidgets, waiter
+        shinyFiles, shinyjs, shinyWidgets, utils, waiter
 Suggests: lintr, testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Config/testthat/parallel: false
+Encoding: UTF-8
+RoxygenNote: 7.3.1
 NeedsCompilation: no
-Packaged: 2023-08-30 07:39:09 UTC; user
+Packaged: 2024-06-06 08:33:21 UTC; user
 Author: Lorenz A. Kapsner [cre, aut] (<https://orcid.org/0000-0003-1866-860X>),
   Jonathan M. Mang [aut] (<https://orcid.org/0000-0003-0518-4710>),
   MIRACUM - Medical Informatics in Research and Care in University
@@ -29,4 +34,4 @@ Author: Lorenz A. Kapsner [cre, aut] (<https://orcid.org/0000-0003-1866-860X>),
   Universitätsklinikum Erlangen [cph]
 Maintainer: Lorenz A. Kapsner <lorenz.kapsner@gmail.com>
 Repository: CRAN
-Date/Publication: 2023-08-30 09:10:24 UTC
+Date/Publication: 2024-06-06 08:50:02 UTC

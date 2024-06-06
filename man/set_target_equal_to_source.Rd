@@ -11,5 +11,5 @@ set_target_equal_to_source(rv)
 }
 \description{
 "Set target == source". It sets target settings = source
-  settings.
+settings.
 }

@@ -18,12 +18,7 @@
 
 #' @title module_dashboard_server
 #'
-#' @param input Shiny server input object
-#' @param output Shiny server output object
-#' @param session Shiny session object
-#' @param rv The global 'reactiveValues()' object, defined in server.R
-#' @param input_re The Shiny server input object, wrapped into a reactive
-#'   expression: input_re = reactive({input})
+#' @inheritParams module_atemp_pl_server
 #'
 #' @return The function returns a shiny server module.
 #'
@@ -274,6 +269,28 @@ module_dashboard_server <-
             # set flag that we have all data
             rv$getdata_target <- FALSE
 
+            # time-compare for differences
+              waiter::waiter_update(html = shiny::tagList(
+              waiter::spin_timer(),
+              "Calculate differences ..."
+            ))
+            rv$time_compare_results <- DQAstats::time_compare(
+              rv = rv,
+              logfile_dir = rv$log$logfile_dir,
+              headless = rv$headless)
+
+            # delete the TIMESTAMP columns
+            fun <- function(x) {
+              if ("TIMESTAMP" %in% names(x)) {
+                x$TIMESTAMP <- NULL
+              }
+              return(x)
+            }
+
+            rv$data_source <- lapply(rv$data_source, fun)
+            rv$data_target <- lapply(rv$data_target, fun)
+
+            # plausibility checks
             waiter::waiter_update(html = shiny::tagList(
               waiter::spin_timer(),
               "Applying plausibility checks ..."
@@ -417,6 +434,10 @@ module_dashboard_server <-
             rv$checks$etl <-
               DQAstats::etl_checks(results = rv$results_descriptive)
 
+            # checks$difference
+            rv$checks$differences <-
+              DQAstats::difference_checks(results = rv$results_descriptive)
+
             # set flag to create report here
             rv$create_report <- TRUE
           }
@@ -516,6 +537,20 @@ module_dashboard_server <-
 
       output$dash_quick_etlchecks <- DT::renderDataTable({
         render_quick_checks(rv$checks$etl)
+      })
+    })
+
+    observe({
+      req(rv$aggregated_exported)
+
+      # workaround to tell ui, that db_connection is there
+      output$differences_results <- reactive({
+        return(TRUE)
+      })
+      outputOptions(output, "differences_results", suspendWhenHidden = FALSE)
+
+      output$dash_quick_difference_checks <- DT::renderDataTable({
+        render_difference_checks(rv$checks$differences, rv$log$logfile_dir)
       })
     })
 
@@ -633,6 +668,21 @@ module_dashboard_ui <- function(id) {
         )
       ),
       conditionalPanel(
+        condition = "output['moduleDashboard-differences_results']",
+        box(
+          title = "Difference Monitor: ",
+          helpText(
+            paste0(
+              "Difference checks to monitor the discrepancies between ",
+              "source and target database. It calculates the difference ",
+              "in absolute values as well as percentage. "
+            )
+          ),
+          DT::dataTableOutput(ns("dash_quick_difference_checks")),
+          width = 12
+        )
+      ),
+      conditionalPanel(
         condition = "output['moduleDashboard-valueconformance_results']",
         box(
           title = "Value Conformance Checks (Verification): ",
@@ -650,6 +700,7 @@ module_dashboard_ui <- function(id) {
         )
       )
     ),
+
     column(
       6,
       conditionalPanel(

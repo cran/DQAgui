@@ -28,13 +28,13 @@ test_connection_button_clicked(
 }
 \value{
 true if the connection could be established and false otherwise
-  (also if an error occurred)
+(also if an error occurred)
 }
 \description{
 After the button "Check connection" is pressed in the GUI,
-  this function will be called and tries to connect to this system
-  and feedbacks the result to the user.
-  If the connection is successfully established, the button will be
-  disabled and this connection will be stored as valid for the given
-  source/target system.
+this function will be called and tries to connect to this system
+and feedbacks the result to the user.
+If the connection is successfully established, the button will be
+disabled and this connection will be stored as valid for the given
+source/target system.
 }

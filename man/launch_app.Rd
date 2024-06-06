@@ -18,26 +18,26 @@ launch_app(
 \item{port}{The port, the MIRACUM DQA Tool is running on (default: 3838)}
 
 \item{utils_path}{The path to the utilities-folder, containing the metadata
-repository files (`mdr.csv` inside the folder `MDR`), JSON files with SQL
-statements (inside the folder `SQL`), config files for the database
-connection (`settings_default.yml`) and the email address used for the
-data map (`email.yml`), a JSON file containing site names (inside the
-folder `MISC`) and a markdown template to create the PDF report
-(`DQA_report.Rmd` inside the folder `RMD`).}
+repository files (\code{mdr.csv} inside the folder \code{MDR}), JSON files with SQL
+statements (inside the folder \code{SQL}), config files for the database
+connection (\code{settings_default.yml}) and the email address used for the
+data map (\code{email.yml}), a JSON file containing site names (inside the
+folder \code{MISC}) and a markdown template to create the PDF report
+(\code{DQA_report.Rmd} inside the folder \code{RMD}).}
 
 \item{mdr_filename}{The filename of the mdr (e.g. "mdr_example_data.csv").}
 
 \item{logfile_dir}{Is the absolute path to the directory where the logfile
 will be stored. If not path is provided the tempdir() will be used.}
 
-\item{parallel}{A boolean. If `TRUE`, initializing a `future::plan()`
-for running the code (default: `FALSE`).}
+\item{parallel}{A boolean. If \code{TRUE}, initializing a \code{future::plan()}
+for running the code (default: \code{FALSE}).}
 
 \item{ncores}{A integer. The number of cores to use. Caution: you would
 probably like to choose a low number when operating on large datasets.
 Default: 2.}
 
-\item{demo_usage}{A boolean. If `TRUE`, a box is shown on the dashboard with
+\item{demo_usage}{A boolean. If \code{TRUE}, a box is shown on the dashboard with
 further instructions on how to use / configure the tool.}
 }
 \value{

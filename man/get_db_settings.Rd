@@ -19,8 +19,8 @@ get_db_settings(input, target = TRUE, db_type, displayname_gui, rv)
 }
 \value{
 This functions returns a data table of key-value pairs for the
-  database settings, which are parsed from the respective config tab
-  from the shiny application.
+database settings, which are parsed from the respective config tab
+from the shiny application.
 }
 \description{
 get_db_settings

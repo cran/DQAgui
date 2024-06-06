@@ -18,12 +18,7 @@
 
 #' @title module_descriptive_server
 #'
-#' @param input Shiny server input object
-#' @param output Shiny server output object
-#' @param session Shiny session object
-#' @param rv The global 'reactiveValues()' object, defined in server.R
-#' @param input_re The Shiny server input object, wrapped into a reactive
-#'   expression: input_re = reactive({input})
+#' @inheritParams module_atemp_pl_server
 #'
 #' @return The function returns a shiny server module.
 #'
@@ -77,7 +72,7 @@ module_descriptive_server <-
         output$descr_description <- renderText({
           d <- desc_out$source_data$description
           # https://community.rstudio.com/t/rendering-markdown-text/11588
-          out <- knitr::knit2html(text = d, fragment.only = TRUE)
+          out <- knitr::knit2html(text = d, template = FALSE, output = NULL)
           # output non-escaped HTML string
           shiny::HTML(out)
         })

@@ -253,6 +253,11 @@ shiny::shinyServer(function(input, output, session) {
                     icon = icon("chart-line")
                 ),
                 shinydashboard::menuItem(
+                    text = "Difference Checks",
+                    tabName = "tab_differences",
+                    icon = icon("not-equal")
+                ),
+                shinydashboard::menuItem(
                     text = "Reporting",
                     tabName = "tab_report",
                     icon = icon("file-alt")
@@ -338,6 +343,14 @@ shiny::shinyServer(function(input, output, session) {
     ########################
     shiny::callModule(module_completeness_server,
                       "moduleCompleteness",
+                      rv,
+                      input_re = input_reactive)
+
+    ########################
+    # tab_differences
+    ########################
+    shiny::callModule(module_differences_server,
+                      "moduleDifferences",
                       rv,
                       input_re = input_reactive)
 

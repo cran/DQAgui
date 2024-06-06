@@ -18,12 +18,7 @@
 
 #' @title module_report_server
 #'
-#' @param input Shiny server input object
-#' @param output Shiny server output object
-#' @param session Shiny session object
-#' @param rv The global 'reactiveValues()' object, defined in server.R
-#' @param input_re The Shiny server input object, wrapped into a reactive
-#'   expression: input_re = reactive({input})
+#' @inheritParams module_atemp_pl_server
 #'
 #' @return The function returns a shiny server module.
 #'
@@ -55,8 +50,8 @@ module_report_server <- function(input,
     req(rv$create_report)
 
     if (is.null(rv$report_created)) {
-      DQAstats::create_markdown(
-        rv = rv,
+      DQAstats::create_pdf_report(
+        rv = shiny::reactiveValuesToList(rv),
         utils_path = rv$utilspath,
         outdir = tempdir(),
         headless = rv$headless
@@ -90,15 +85,24 @@ module_report_server <- function(input,
              ".pdf")
     },
     content = function(file) {
-      file.copy(
-        paste0(tempdir(),
-               "/DQA_report_",
-               gsub("\\-|\\:| ",
-                    "",
-                    substr(rv$start_time, 1, 16)),
-               ".pdf"),
-        file
+
+      outfile <- sort(
+        list.files(
+          path = tempdir(),
+          pattern = "^DQA_report_.*\\.pdf",
+          full.names = TRUE
+        ),
+        decreasing = TRUE
       )
+      print(outfile)
+      if (length(outfile) < 1) {
+        warning("An error occurred finding the pdf-file.")
+      } else {
+        file.copy(
+          from = outfile[1],
+          to = file
+        )
+      }
     },
     contentType = "application/pdf"
   )

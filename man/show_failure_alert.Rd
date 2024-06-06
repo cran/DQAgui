@@ -8,7 +8,7 @@ show_failure_alert(what_failed)
 }
 \arguments{
 \item{what_failed}{Short description of what failed.Like:
-  "Getting the data failed."
+"Getting the data failed."
 '}
 }
 \value{

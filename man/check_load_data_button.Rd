@@ -13,9 +13,9 @@ check_load_data_button(rv, session)
 }
 \description{
 If there is a valid source system and a valid target system
-  (this is also the case if the user set target == source), the result
-  of this function will be TRUE and the button will be displayed via
-  shinyjs. Otherwise the result is FALSE and the button will be hidden.
-  This function also displays (or hides) the variables which can be
-  assessed.
+(this is also the case if the user set target == source), the result
+of this function will be TRUE and the button will be displayed via
+shinyjs. Otherwise the result is FALSE and the button will be hidden.
+This function also displays (or hides) the variables which can be
+assessed.
 }

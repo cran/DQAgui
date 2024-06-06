@@ -17,12 +17,7 @@
 
 #' @title module_log_server
 #'
-#' @param input Shiny server input object
-#' @param output Shiny server output object
-#' @param session Shiny session object
-#' @param rv The global 'reactiveValues()' object, defined in server.R
-#' @param input_re The Shiny server input object, wrapped into a reactive
-#'   expression: input_re = reactive({input})
+#' @inheritParams module_atemp_pl_server
 #'
 #' @return The function returns a shiny server module.
 #'
