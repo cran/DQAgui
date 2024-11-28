@@ -1,6 +1,6 @@
 # DQAgui - A graphical user interface (GUI) to the functions implemented in the
 # R package 'DQAstats'.
-# Copyright (C) 2019-2022 Universitätsklinikum Erlangen
+# Copyright (C) 2019-2024 Universitätsklinikum Erlangen
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -210,6 +210,15 @@ validate_inputs <- function(rv, input, output, session) {
             output = output,
             session = session
           )
+        } else if (rv[[source_target]]$system_type == "trino") {
+          error_tmp <- test_connection_button_clicked(
+            rv = rv,
+            source_target = source_target,
+            db_type = "trino",
+            input = input,
+            output = output,
+            session = session
+          )
         } else {
           ## This system name is not known/implemented here:
           DIZtools::feedback(
@@ -266,7 +275,7 @@ fix_sql_display <- function(text) {
 check_load_data_button <- function(rv, session) {
   debugging <- FALSE
   if (debugging) {
-    systems <- c("csv", "postgres", "oracle")
+    systems <- c("csv", "postgres", "oracle", "trino")
   } else {
     systems <- tolower(rv$system_types)
   }

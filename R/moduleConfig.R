@@ -1,6 +1,6 @@
 # DQAgui - A graphical user interface (GUI) to the functions implemented in the
 # R package 'DQAstats'.
-# Copyright (C) 2019-2022 Universitätsklinikum Erlangen
+# Copyright (C) 2019-2024 Universitätsklinikum Erlangen
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -53,7 +53,8 @@ module_config_server <-
     system_types_mapping <-
       list("postgres" = "PostgreSQL",
            "csv" = "CSV",
-           "oracle" = "Oracle")
+           "oracle" = "Oracle",
+           "trino" = "Trino")
 
     # If source-csv-path-button is clicked, read the path and save it:
     # root-folder of shinyFiles::shinyDirChoose
@@ -143,6 +144,8 @@ module_config_server <-
             renderText({
               feedback_txt(system = "CSV", type = "source")
             })
+          print("rv$source$system_type")
+          print(rv$source$system_type)
         }
         check_load_data_button(rv, session)
       }
@@ -516,6 +519,59 @@ module_config_server <-
                                 choices = oracle_system_names)
             }
           }
+          if (!("trino" %in% tolower(rv$system_types))) {
+            # Remove Trino-Tabs:
+            DIZtools::feedback(
+              "Removing trino-tab from source ...",
+              logfile_dir = rv$log$logfile_dir,
+              headless = rv$headless
+            )
+            shiny::removeTab(inputId = "source_tabs",
+                             target = system_types_mapping[["trino"]])
+
+            DIZtools::feedback(
+              "Removing trino-tab from target ...",
+              logfile_dir = rv$log$logfile_dir,
+              headless = rv$headless
+            )
+            shiny::removeTab(inputId = "target_tabs",
+                             target = system_types_mapping[["trino"]])
+          } else {
+            # Fill the tab with presettings
+            # - filter for all system_names with
+            #% system_type == trino
+            #% select source_system_name from
+            #% rv$systems where source_system_type == trino
+            #% GROUP BY source_system_name
+            trino_system_names <-
+              rv$systems[get("source_system_type") == "trino" &
+                           !is.na(get("source_system_name")), ] %>%
+              .[["source_system_name"]] %>%
+              unique()
+            DIZtools::feedback(
+              print_this = paste(trino_system_names, collapse = ", "),
+              prefix = "trino_system_names: ",
+              findme = "be136f5ab6", # TODO: was genau ist das und wie lege ich es fest?
+              logfile_dir = rv$log$logfile_dir,
+              headless = rv$headless
+            )
+
+            trino_system_names <-
+              rv$displaynames[get("source_system_name") %in%
+                                trino_system_names, ][["displayname"]] %>%
+              unlist(use.names = FALSE)
+
+            if (length(trino_system_names) > 0) {
+              # Show buttons to prefill diff. systems presettings:
+              # - Add a button/choice/etc. for each system:
+              shiny::updateSelectInput(session = session,
+                                inputId = "source_trino_presettings_list",
+                                choices = trino_system_names)
+              shiny::updateSelectInput(session = session,
+                                inputId = "target_trino_presettings_list",
+                                choices = trino_system_names)
+            }
+          }
 
           first_system <- tolower(rv$system_types)[[1]]
           DIZtools::feedback(
@@ -720,6 +776,77 @@ module_config_server <-
       shinyjs::enable("source_oracle_test_connection")
     })
 
+    observeEvent(input$source_trino_presettings_list, {
+      DIZtools::feedback(
+        print_this =
+          paste0(
+            "Input-preset '",
+            input$source_trino_presettings_list,
+            "' was chosen as SOURCE.",
+            " Loading presets ..."
+          ),
+        findme = "e9832b3578",
+        logfile_dir = rv$log$logfile_dir,
+        headless = rv$headless
+      )
+      config_stuff <-
+        rv$settings[[tolower(input$source_trino_presettings_list)]]
+      config_stuff <-
+        get_settings_from_displayname(
+          displayname = input$source_trino_presettings_list,
+          settings = rv$settings
+        )
+
+      DIZtools::feedback(
+        print_this = paste(
+          "Loaded successfully.",
+          "Filling presets to global rv-object and UI ..."
+        ),
+        findme = "3231a6d49f",
+        logfile_dir = rv$log$logfile_dir,
+        headless = rv$headless
+      )
+      if (length(config_stuff) != 0) {
+        updateTextInput(session = session,
+                        inputId = "config_source_trino_dbname",
+                        value = config_stuff[["dbname"]])
+        updateTextInput(session = session,
+                        inputId = "config_source_trino_host",
+                        value = config_stuff[["host"]])
+        updateTextInput(session = session,
+                        inputId = "config_source_trino_port",
+                        value = config_stuff[["port"]])
+        updateTextInput(session = session,
+                        inputId = "config_source_trino_user",
+                        value = config_stuff[["user"]])
+        updateTextInput(session = session,
+                        inputId = "config_source_trino_password",
+                        value = config_stuff[["password"]])
+      } else {
+        updateTextInput(session = session,
+                        inputId = "config_source_trino_dbname",
+                        value = "")
+        updateTextInput(session = session,
+                        inputId = "config_source_trino_host",
+                        value = "")
+        updateTextInput(session = session,
+                        inputId = "config_source_trino_port",
+                        value = "")
+        updateTextInput(session = session,
+                        inputId = "config_source_trino_user",
+                        value = "")
+        updateTextInput(session = session,
+                        inputId = "config_source_trino_password",
+                        value = "")
+      }
+      updateActionButton(
+        session = session,
+        inputId = "source_trino_test_connection",
+        label = "Test & Save connection",
+        icon = icon("database")
+      )
+      shinyjs::enable("source_trino_test_connection")
+    })
 
     #observeEvent(input$target_pg_presettings_btn, {
     observeEvent(input$target_postgres_presettings_list, {
@@ -868,6 +995,76 @@ module_config_server <-
       shinyjs::enable("target_oracle_test_connection")
     })
 
+    observeEvent(input$target_trino_presettings_list, {
+      DIZtools::feedback(
+        paste0(
+          "Input-preset ",
+          input$target_trino_presettings_list,
+          " was chosen as TARGET.",
+          " Loading presets ..."
+        ),
+        findme = "d603f8127a",
+        logfile_dir = rv$log$logfile_dir,
+        headless = rv$headless
+      )
+      # config_stuff <-
+      config_stuff <-
+        get_settings_from_displayname(
+          displayname = input$target_trino_presettings_list,
+          settings = rv$settings
+        )
+
+      DIZtools::feedback(
+        paste(
+          "Loaded successfully.",
+          "Filling presets to global rv-object and UI ..."
+        ),
+        findme = "fa908f0035",
+        logfile_dir = rv$log$logfile_dir,
+        headless = rv$headless
+      )
+      if (length(config_stuff) != 0) {
+        updateTextInput(session = session,
+                        inputId = "config_target_trino_dbname",
+                        value = config_stuff[["dbname"]])
+        updateTextInput(session = session,
+                        inputId = "config_target_trino_host",
+                        value = config_stuff[["host"]])
+        updateTextInput(session = session,
+                        inputId = "config_target_trino_port",
+                        value = config_stuff[["port"]])
+        updateTextInput(session = session,
+                        inputId = "config_target_trino_user",
+                        value = config_stuff[["user"]])
+        updateTextInput(session = session,
+                        inputId = "config_target_trino_password",
+                        value = config_stuff[["password"]])
+      } else {
+        updateTextInput(session = session,
+                        inputId = "config_target_trino_dbname",
+                        value = "")
+        updateTextInput(session = session,
+                        inputId = "config_target_trino_host",
+                        value = "")
+        updateTextInput(session = session,
+                        inputId = "config_target_trino_port",
+                        value = "")
+        updateTextInput(session = session,
+                        inputId = "config_target_trino_user",
+                        value = "")
+        updateTextInput(session = session,
+                        inputId = "config_target_trino_password",
+                        value = "")
+      }
+      updateActionButton(
+        session = session,
+        inputId = "target_trino_test_connection",
+        label = "Test & Save connection",
+        icon = icon("database")
+      )
+      shinyjs::enable("target_trino_test_connection")
+    })
+
 
     observeEvent(input$source_postgres_test_connection, {
       test_connection_button_clicked(
@@ -885,6 +1082,17 @@ module_config_server <-
         rv = rv,
         source_target = "source",
         db_type = "oracle",
+        input = input,
+        output = output,
+        session = session
+      )
+    })
+
+    observeEvent(input$source_trino_test_connection, {
+      test_connection_button_clicked(
+        rv = rv,
+        source_target = "source",
+        db_type = "trino",
         input = input,
         output = output,
         session = session
@@ -913,6 +1121,17 @@ module_config_server <-
       )
     })
 
+    observeEvent(input$target_trino_test_connection, {
+      test_connection_button_clicked(
+        rv = rv,
+        source_target = "target",
+        db_type = "trino",
+        input = input,
+        output = output,
+        session = session
+      )
+    })
+
 
     observeEvent(input$target_system_to_source_system_btn, {
       if (isTRUE(input$target_system_to_source_system_btn)) {
@@ -921,6 +1140,7 @@ module_config_server <-
         hideTab(inputId = "target_tabs", target = "CSV")
         hideTab(inputId = "target_tabs", target = "PostgreSQL")
         hideTab(inputId = "target_tabs", target = "Oracle")
+        hideTab(inputId = "target_tabs", target = "Trino")
         # Assign source-values to target:
         rv <- set_target_equal_to_source(rv)
         # Set internal flag that target == source:
@@ -946,6 +1166,7 @@ module_config_server <-
         showTab(inputId = "target_tabs", target = "CSV")
         showTab(inputId = "target_tabs", target = "PostgreSQL")
         showTab(inputId = "target_tabs", target = "Oracle")
+        showTab(inputId = "target_tabs", target = "Trino")
         # Feedback to the console:
         DIZtools::feedback(
           "Target != source now.",
@@ -1475,7 +1696,65 @@ module_config_ui <- function(id) {
                   icon = icon("database"),
                   style = "text-align:center;"
                 )
-              )
+              ),
+              tabPanel(
+                # ATTENTION: If you change the title, you also have to change
+                # the
+                # corresponding part above for the "source == source" button
+                # reaction. Otherwise the tabs won't hide/show up anymore.
+                # >> ATTENTION <<
+                title = "Trino",
+                # >> ATTENTION << for title. See above.
+                id = ns("source_tab_pg"),
+                h4("Source Database Connection"),
+                box(
+                  title = "Preloadings",
+                  # background = "blue",
+                  #solidHeader = TRUE,
+                  width = 12,
+                  selectInput(
+                    # This will be filled in the server part.
+                    inputId = ns("source_trino_presettings_list"),
+                    label = NULL,
+                    choices = NULL,
+                    selected = NULL
+                  ),
+                  style = "text-align:center;"
+                ),
+                textInput(
+                  inputId = ns("config_source_trino_dbname"),
+                  label = "DB Name",
+                  placeholder = "Enter the name of the database ..."
+                ),
+                textInput(
+                  inputId = ns("config_source_trino_host"),
+                  label = "IP",
+                  placeholder = "Enter the IP here in format '192.168.1.1' ..."
+                ),
+                textInput(
+                  inputId = ns("config_source_trino_port"),
+                  label = "Port",
+                  placeholder = "Enter the Port of the database connection ..."
+                ),
+                textInput(
+                  inputId = ns("config_source_trino_user"),
+                  label = "Username",
+                  placeholder =
+                    "Enter the Username for the database connection ..."
+                ),
+                passwordInput(
+                  inputId = ns("config_source_trino_password"),
+                  label = "Password",
+                  placeholder = "Enter the database password ..."
+                ),
+                br(),
+                actionButton(
+                  inputId = ns("source_trino_test_connection"),
+                  label = "Test & Save connection",
+                  icon = icon("database"),
+                  style = "text-align:center;"
+                )
+              ),
             )
           ),
           box(
@@ -1658,6 +1937,64 @@ module_config_ui <- function(id) {
                 br(),
                 actionButton(
                   inputId = ns("target_oracle_test_connection"),
+                  label = "Test & Save connection",
+                  icon = icon("database"),
+                  style = "text-align:center;"
+                )
+              ),
+              tabPanel(
+                # ATTENTION: If you change the title, you also have to change
+                # the
+                # corresponding part above for the "target == source" button
+                # reaction. Otherwise the tabs won't hide/show up anymore.
+                # >> ATTENTION <<
+                title = "Trino",
+                # >> ATTENTION << for title. See above.
+                id = ns("target_tab_pg"),
+                h4("Target Database Connection"),
+                box(
+                  title = "Preloadings",
+                  # background = "blue",
+                  #solidHeader = TRUE,
+                  width = 12,
+                  selectInput(
+                    # This will be filled in the server part.
+                    inputId = ns("target_trino_presettings_list"),
+                    label = NULL,
+                    choices = NULL,
+                    selected = NULL
+                  ),
+                  style = "text-align:center;"
+                ),
+                textInput(
+                  inputId = ns("config_target_trino_dbname"),
+                  label = "DB Name",
+                  placeholder = "Enter the name of the database ..."
+                ),
+                textInput(
+                  inputId = ns("config_target_trino_host"),
+                  label = "IP",
+                  placeholder = "Enter the IP here in format '192.168.1.1' ..."
+                ),
+                textInput(
+                  inputId = ns("config_target_trino_port"),
+                  label = "Port",
+                  placeholder = "Enter the Port of the database connection ..."
+                ),
+                textInput(
+                  inputId = ns("config_target_trino_user"),
+                  label = "Username",
+                  placeholder =
+                    "Enter the Username for the database connection ..."
+                ),
+                passwordInput(
+                  inputId = ns("config_target_trino_password"),
+                  label = "Password",
+                  placeholder = "Enter the database password ..."
+                ),
+                br(),
+                actionButton(
+                  inputId = ns("target_trino_test_connection"),
                   label = "Test & Save connection",
                   icon = icon("database"),
                   style = "text-align:center;"

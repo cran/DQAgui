@@ -1,6 +1,6 @@
 # DQAgui - A graphical user interface (GUI) to the functions implemented in the
 # R package 'DQAstats'.
-# Copyright (C) 2019-2022 Universitätsklinikum Erlangen
+# Copyright (C) 2019-2024 Universitätsklinikum Erlangen
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -118,7 +118,6 @@ shiny::shinyServer(function(input, output, session) {
     # ########################
     # # tab_config
     # ########################
-
     shiny::callModule(module_config_server,
                       "moduleConfig",
                       rv,
@@ -162,6 +161,13 @@ shiny::shinyServer(function(input, output, session) {
             shinyjs::disable("moduleConfig-config_source_oracle_password")
             shinyjs::disable("moduleConfig-config_source_sid_password")
             shinyjs::disable("moduleConfig-source_oracle_test_connection")
+            shinyjs::disable("moduleConfig-source_trino_presettings_list")
+            shinyjs::disable("moduleConfig-config_source_trino_dbname")
+            shinyjs::disable("moduleConfig-config_source_trino_host")
+            shinyjs::disable("moduleConfig-config_source_trino_port")
+            shinyjs::disable("moduleConfig-config_source_trino_user")
+            shinyjs::disable("moduleConfig-config_source_trino_password")
+            shinyjs::disable("moduleConfig-source_trino_test_connection")
 
             shinyjs::disable("moduleConfig-config_targetdir_in")
             shinyjs::disable("moduleConfig-target_csv_presettings_list")
@@ -182,6 +188,13 @@ shiny::shinyServer(function(input, output, session) {
             shinyjs::disable("moduleConfig-config_target_oracle_password")
             shinyjs::disable("moduleConfig-config_target_sid_password")
             shinyjs::disable("moduleConfig-target_oracle_test_connection")
+            shinyjs::disable("moduleConfig-target_trino_presettings_list")
+            shinyjs::disable("moduleConfig-config_target_trino_dbname")
+            shinyjs::disable("moduleConfig-config_target_trino_host")
+            shinyjs::disable("moduleConfig-config_target_trino_port")
+            shinyjs::disable("moduleConfig-config_target_trino_user")
+            shinyjs::disable("moduleConfig-config_target_trino_password")
+            shinyjs::disable("moduleConfig-target_trino_test_connection")
 
 
             shinyjs::disable("moduleConfig-select_dqa_assessment_variables")

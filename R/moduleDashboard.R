@@ -1,6 +1,6 @@
 # DQAgui - A graphical user interface (GUI) to the functions implemented in the
 # R package 'DQAstats'.
-# Copyright (C) 2019-2022 Universitätsklinikum Erlangen
+# Copyright (C) 2019-2024 Universitätsklinikum Erlangen
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -268,12 +268,12 @@ module_dashboard_server <-
 
             # set flag that we have all data
             rv$getdata_target <- FALSE
-
             # time-compare for differences
               waiter::waiter_update(html = shiny::tagList(
               waiter::spin_timer(),
               "Calculate differences ..."
             ))
+
             rv$time_compare_results <- DQAstats::time_compare(
               rv = rv,
               logfile_dir = rv$log$logfile_dir,
@@ -375,7 +375,6 @@ module_dashboard_server <-
             }
             invisible(gc())
 
-
             # reduce categorical variables to display max. 25 values
             rv$results_descriptive <-
               DQAstats::reduce_cat(data = rv$results_descriptive,
@@ -402,6 +401,7 @@ module_dashboard_server <-
               rv$data_target <- NULL
               invisible(gc())
             }
+
             # completeness
             rv$completeness <-
               DQAstats::completeness(

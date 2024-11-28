@@ -1,12 +1,13 @@
 Package: DQAgui
 Title: Graphical User Interface for Data Quality Assessment
-Version: 0.2.4
-Date: 2024-06-06
+Version: 0.2.5
+Date: 2024-11-28
 Authors@R: c(
     person("Lorenz A.", "Kapsner", , "lorenz.kapsner@gmail.com", role = c("cre", "aut"),
            comment = c(ORCID = "0000-0003-1866-860X")),
     person("Jonathan M.", "Mang", role = "aut",
            comment = c(ORCID = "0000-0003-0518-4710")),
+    person("Helene Köster", role = "ctb"),
     person("MIRACUM - Medical Informatics in Research and Care in University Medicine", role = "fnd"),
     person("Universitätsklinikum Erlangen", role = "cph")
   )
@@ -24,14 +25,14 @@ Suggests: lintr, testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Config/testthat/parallel: false
 Encoding: UTF-8
-RoxygenNote: 7.3.1
 NeedsCompilation: no
-Packaged: 2024-06-06 08:33:21 UTC; user
+Packaged: 2024-11-28 15:22:49 UTC; user
 Author: Lorenz A. Kapsner [cre, aut] (<https://orcid.org/0000-0003-1866-860X>),
   Jonathan M. Mang [aut] (<https://orcid.org/0000-0003-0518-4710>),
+  Helene Köster [ctb],
   MIRACUM - Medical Informatics in Research and Care in University
     Medicine [fnd],
   Universitätsklinikum Erlangen [cph]
 Maintainer: Lorenz A. Kapsner <lorenz.kapsner@gmail.com>
 Repository: CRAN
-Date/Publication: 2024-06-06 08:50:02 UTC
+Date/Publication: 2024-11-28 15:40:02 UTC
