@@ -24,8 +24,6 @@ shiny::shinyServer(function(input, output, session) {
         log = list(logfile_dir = DIZtools::clean_path_name(logfile_dir)),
         utilspath = DIZtools::clean_path_name(utils_path),
         current_date = format(Sys.Date(), "%d. %B %Y", tz = "CET"),
-        parallel = parallel,
-        ncores = ncores,
         demo_usage = demo_usage
     )
 
@@ -76,12 +74,6 @@ shiny::shinyServer(function(input, output, session) {
                 finally = function(f) {
                     return(out)
                 }
-            )
-
-            DQAstats::parallel(
-                parallel = rv$parallel,
-                logfile_dir = rv$log$logfile_dir,
-                ncores = rv$ncores
             )
 
             rv$finished_onstart <- TRUE

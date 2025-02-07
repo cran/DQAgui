@@ -50,8 +50,6 @@ options(knitr.table.format = "latex")
 # ##	↑	↑	↑	↑	↑	↑	↑	↑	↑	↑	↑
 #
 # logfile_dir = tempdir()
-# parallel = FALSE
-# ncores = 4
 # demo_usage = TRUE
 #
 # ## To build and upload the package, run:

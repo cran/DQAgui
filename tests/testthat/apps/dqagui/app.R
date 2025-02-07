@@ -39,6 +39,5 @@ launch_app(
   port = 3838,
   utils_path = utils_path,
   mdr_filename = mdr_filename,
-  logfile_dir = logfile_dir,
-  parallel = FALSE
+  logfile_dir = logfile_dir
 )
